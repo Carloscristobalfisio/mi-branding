@@ -562,10 +562,9 @@
 (function(){
 
   /* -------------------------------------------------------------
-     CONFIG — replace with the real WhatsApp number before publishing
-     Format: country code + number, no + or spaces (e.g. 34600111222)
+     CONFIG — Carlos's WhatsApp contact link
   --------------------------------------------------------------*/
-  const WHATSAPP_NUMBER = "34XXXXXXXXX"; // TODO: set real number
+  const WHATSAPP_LINK = "https://wa.link/aga4qa";
 
   const PILLARS = {
     carga:        { label: "Carga y progresión",     colorVar: null },
@@ -684,9 +683,10 @@
   }
 
   function buildWhatsappLink(extra){
-    const base = "https://wa.me/" + WHATSAPP_NUMBER;
-    const msg = encodeURIComponent(extra || "Hola Carlos, quiero hablar sobre mi recuperación.");
-    return base + "?text=" + msg;
+    if(!extra) return WHATSAPP_LINK;
+    // wa.link short links may or may not forward query params to WhatsApp;
+    // appending is harmless either way (worst case it's ignored).
+    return WHATSAPP_LINK + "?text=" + encodeURIComponent(extra);
   }
 
   document.getElementById('navWhatsapp').href = buildWhatsappLink();
