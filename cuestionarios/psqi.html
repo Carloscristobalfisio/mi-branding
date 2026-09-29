@@ -1,0 +1,461 @@
+<title>Índice de Calidad de Sueño de Pittsburgh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Instrument+Serif:ital@1&display=swap">
+<style>
+/* Layout: una columna de lectura (formulario clínico), secciones numeradas como el cuestionario original, resultado al final */
+:root{
+  --bg:#FAFAF8; --card:#FFFFFF; --fg:#1A1A1A; --muted:#6B6B6B; --line:#E8E8E4;
+  --accent:#C8E6C3; --accent-ink:#5A7A52; --cta:#0A0A0A; --cta-fg:#FFFFFF;
+  --num:#D4D4CE; --err:#D9534F; --wa:#25D366;
+  --f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-display:"Instrument Serif",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E0F0D; --card:#161815; --fg:#F2F2EE; --muted:#A3A69E; --line:#2A2D28;
+  --accent:#2F4A2B; --accent-ink:#B9DDB3; --cta:#F2F2EE; --cta-fg:#0A0A0A;
+  --num:#3A3D37; --err:#F07470; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E0F0D; --card:#161815; --fg:#F2F2EE; --muted:#A3A69E; --line:#2A2D28;
+  --accent:#2F4A2B; --accent-ink:#B9DDB3; --cta:#F2F2EE; --cta-fg:#0A0A0A;
+  --num:#3A3D37; --err:#F07470; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:720px;margin:0 auto}
+header{padding-block:40px 24px;display:grid;gap:14px}
+.badge{justify-self:start;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+h1{font-weight:300;font-size:clamp(34px,7vw,52px);line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1 em{font-family:var(--f-display);font-style:italic;font-weight:400}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.brand{font-size:13px;color:var(--muted)}
+.brand strong{color:var(--fg);font-weight:600}
+
+.intro{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-block:18px;color:var(--muted);font-size:15px;display:grid;gap:8px}
+.intro p{margin:0}
+
+.progress{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{flex:1;height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent-ink);transition:width .3s}
+
+.patient{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;padding-block:24px}
+label.f{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:500}
+input[type=text],input[type=date],input[type=time],input[type=number],textarea{
+  font:inherit;font-size:16px;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;min-width:0}
+input:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible,.opt input:focus-visible+span{outline:2px solid var(--accent-ink);outline-offset:2px}
+
+section.part{padding-block:28px 8px;display:grid;gap:4px}
+section.part h2{font-weight:400;font-size:clamp(22px,4vw,28px);margin:0;text-wrap:balance}
+section.part>p{color:var(--muted);margin:0 0 8px;font-size:15px}
+
+.q{display:grid;grid-template-columns:56px 1fr;gap:4px 12px;padding-block:22px;border-top:1px solid var(--line)}
+.q .n{font-size:30px;font-weight:200;color:var(--num);line-height:1;font-variant-numeric:tabular-nums}
+.q .body{display:grid;gap:12px;min-width:0}
+.q .t{font-weight:500;margin:0}
+.q .hint{font-size:13px;color:var(--muted);margin:-6px 0 0}
+.q.missing .t{color:var(--err)}
+.q.missing .n{color:var(--err)}
+.inline{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.inline input{max-width:160px}
+.inline span{color:var(--muted);font-size:14px}
+
+.opts{display:grid;gap:8px}
+.opts.four{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.opt{position:relative;cursor:pointer}
+.opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.opt span{display:block;height:100%;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.35;transition:border-color .15s,background .15s}
+.opt:hover span{border-color:var(--muted)}
+.opt input:checked+span{background:var(--accent);border-color:var(--accent-ink);color:var(--accent-ink);font-weight:500}
+
+.sub{display:grid;gap:10px}
+.subq{display:grid;gap:8px;padding:14px 0;border-top:1px dashed var(--line)}
+.subq:first-child{border-top:0;padding-top:0}
+.subq .t{font-weight:400;font-size:15px}
+.subq .t b{font-weight:600;color:var(--accent-ink);margin-right:6px}
+
+.partner[hidden]{display:none!important}
+.note{font-size:13px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+
+.actions{display:grid;gap:12px;padding-block:32px 8px}
+button.primary{font:inherit;font-weight:500;font-size:16px;background:var(--cta);color:var(--cta-fg);border:0;border-radius:999px;padding:14px 26px;cursor:pointer;justify-self:start}
+button.primary:hover{opacity:.9}
+.err{color:var(--err);font-size:14px;margin:0}
+
+#result{padding-block:32px;border-top:1px solid var(--line);display:grid;gap:22px}
+.score{display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:end}
+.score .big{font-size:clamp(64px,14vw,96px);font-weight:200;line-height:.9;font-variant-numeric:tabular-nums}
+.score .big small{font-size:.3em;color:var(--muted);font-weight:300}
+.pill{justify-self:start;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink)}
+.pill.bad{background:transparent;color:var(--err);border:1px solid var(--err)}
+.score p{grid-column:1/-1;margin:0;color:var(--muted);max-width:60ch}
+.comps{display:grid;gap:10px}
+.comp{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;font-size:14px}
+.comp .dots{display:flex;gap:4px}
+.comp .dots i{width:22px;height:6px;border-radius:3px;background:var(--line)}
+.comp .dots i.on{background:var(--accent-ink)}
+.comp .v{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;min-width:34px;text-align:right}
+.comp .row{display:flex;align-items:center;gap:10px}
+.send{display:grid;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.send h3{margin:0;font-weight:600;font-size:17px}
+.send p{margin:0;color:var(--muted);font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btns a,.btns button{font:inherit;font-size:15px;font-weight:500;border-radius:999px;padding:11px 20px;cursor:pointer;text-decoration:none;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+.btns a.wa{background:var(--wa);color:#0A0A0A;border-color:var(--wa)}
+textarea#summary{font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;min-height:160px;resize:vertical}
+footer{padding-block:40px 0;color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:40px}
+@media (max-width:480px){.q{grid-template-columns:1fr}.q .n{font-size:22px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="badge">Cuestionario · PSQI</span>
+    <h1>Índice de Calidad de Sueño de <em>Pittsburgh</em></h1>
+    <p class="lead">Este cuestionario me ayuda a entender cómo estás durmiendo. El sueño influye directamente en el dolor y en cómo avanza tu recuperación. Te llevará unos 5–10 minutos.</p>
+    <div class="brand"><strong>Carlos Cristóbal Fisioterapia</strong> · Fisioterapeuta · Readaptación Online</div>
+  </header>
+
+  <div class="intro">
+    <p>Las preguntas se refieren a tu forma habitual de dormir <strong>durante el último mes</strong>. Intenta responder de la forma más exacta posible, pensando en lo ocurrido durante la mayor parte de los días y noches de ese mes.</p>
+    <p>Responde a todas las preguntas. Al terminar verás tu puntuación y podrás enviármela por WhatsApp.</p>
+  </div>
+
+  <div class="progress" aria-live="polite"><div class="bar"><i id="barFill"></i></div><span id="progTxt">0 / 19</span></div>
+
+  <form id="psqi" novalidate>
+    <div class="patient">
+      <label class="f" for="pNombre">Nombre y apellidos<input type="text" id="pNombre" autocomplete="name" placeholder="Tu nombre"></label>
+      <label class="f" for="pFecha">Fecha<input type="date" id="pFecha"></label>
+      <label class="f" for="pEdad">Edad<input type="number" id="pEdad" min="10" max="110" inputmode="numeric" placeholder="Años"></label>
+    </div>
+
+    <section class="part">
+      <h2>Tus horarios de sueño</h2>
+      <p>Escribe la respuesta que más se ajuste a una noche normal del último mes.</p>
+    </section>
+
+    <div class="q" data-q="q1">
+      <div class="n">01</div>
+      <div class="body">
+        <p class="t">Durante el último mes, ¿cuál ha sido, normalmente, tu hora de acostarte?</p>
+        <div class="inline"><input type="time" id="q1" aria-label="Hora de acostarse"><span>hora habitual</span></div>
+      </div>
+    </div>
+
+    <div class="q" data-q="q2">
+      <div class="n">02</div>
+      <div class="body">
+        <p class="t">¿Cuánto tiempo has tardado en dormirte, normalmente, las noches del último mes?</p>
+        <div class="inline"><input type="number" id="q2" min="0" max="600" inputmode="numeric" aria-label="Minutos en dormirse"><span>minutos</span></div>
+      </div>
+    </div>
+
+    <div class="q" data-q="q3">
+      <div class="n">03</div>
+      <div class="body">
+        <p class="t">Durante el último mes, ¿a qué hora te has levantado habitualmente por la mañana?</p>
+        <div class="inline"><input type="time" id="q3" aria-label="Hora de levantarse"><span>hora habitual</span></div>
+      </div>
+    </div>
+
+    <div class="q" data-q="q4">
+      <div class="n">04</div>
+      <div class="body">
+        <p class="t">¿Cuántas horas calculas que habrás dormido verdaderamente cada noche durante el último mes?</p>
+        <p class="hint">El tiempo que has dormido de verdad, que puede ser distinto al que has pasado en la cama.</p>
+        <div class="inline"><input type="number" id="q4" min="0" max="24" step="0.25" inputmode="decimal" aria-label="Horas dormidas"><span>horas (puedes usar decimales, p. ej. 6,5)</span></div>
+      </div>
+    </div>
+
+    <section class="part">
+      <h2>Problemas para dormir</h2>
+      <p>Elige la respuesta que mejor describa tu último mes.</p>
+    </section>
+
+    <div class="q" data-q="q5">
+      <div class="n">05</div>
+      <div class="body">
+        <p class="t">Durante el último mes, ¿cuántas veces has tenido problemas para dormir a causa de…?</p>
+        <div class="sub" id="q5list"></div>
+      </div>
+    </div>
+
+    <section class="part">
+      <h2>Calidad y descanso durante el día</h2>
+    </section>
+
+    <div class="q" data-q="q6">
+      <div class="n">06</div>
+      <div class="body">
+        <p class="t">Durante el último mes, ¿cómo valorarías, en conjunto, la calidad de tu sueño?</p>
+        <div class="opts four" data-name="q6" data-scale="calidad"></div>
+      </div>
+    </div>
+
+    <div class="q" data-q="q7">
+      <div class="n">07</div>
+      <div class="body">
+        <p class="t">Durante el último mes, ¿cuántas veces habrás tomado medicinas (por tu cuenta o recetadas por el médico) para dormir?</p>
+        <div class="opts four" data-name="q7" data-scale="freq"></div>
+      </div>
+    </div>
+
+    <div class="q" data-q="q8">
+      <div class="n">08</div>
+      <div class="body">
+        <p class="t">Durante el último mes, ¿cuántas veces has sentido somnolencia mientras conducías, comías o desarrollabas alguna otra actividad?</p>
+        <div class="opts four" data-name="q8" data-scale="freq"></div>
+      </div>
+    </div>
+
+    <div class="q" data-q="q9">
+      <div class="n">09</div>
+      <div class="body">
+        <p class="t">Durante el último mes, ¿cuánto problema te ha supuesto tener ánimos para realizar alguna de las actividades de la pregunta anterior?</p>
+        <div class="opts four" data-name="q9" data-scale="problema"></div>
+      </div>
+    </div>
+
+    <div class="q" data-q="q10">
+      <div class="n">10</div>
+      <div class="body">
+        <p class="t">¿Duermes solo/a o acompañado/a?</p>
+        <div class="opts" data-name="q10" data-scale="companero"></div>
+      </div>
+    </div>
+
+    <div class="q partner" id="partnerBlock" hidden>
+      <div class="n">10+</div>
+      <div class="body">
+        <p class="t">Si tienes pareja o compañero/a de habitación, pídele que conteste cuántas veces en el último mes te ha notado…</p>
+        <p class="note">Estas preguntas son opcionales y no cuentan para la puntuación, pero me dan información útil.</p>
+        <div class="sub" id="q10list"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="primary">Ver mi resultado →</button>
+      <p class="err" id="formErr" hidden></p>
+    </div>
+  </form>
+
+  <section id="result" hidden aria-live="polite">
+    <div class="score">
+      <div class="big" id="rTotal">0<small> / 21</small></div>
+      <span class="pill" id="rPill">Buena calidad de sueño</span>
+      <p id="rText"></p>
+    </div>
+    <div class="comps" id="rComps"></div>
+    <div class="send">
+      <h3>Envíame tus resultados</h3>
+      <p>Pulsa el botón de WhatsApp para mandarme el resumen, o cópialo y pégalo en el chat. Lo revisaré antes de tu próxima sesión.</p>
+      <div class="btns">
+        <a class="wa" id="waLink" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+        <button type="button" id="copyBtn">Copiar resumen</button>
+      </div>
+      <textarea id="summary" readonly aria-label="Resumen de respuestas"></textarea>
+    </div>
+  </section>
+
+  <footer>
+    Pittsburgh Sleep Quality Index (Buysse et al., 1989). Versión española adaptada de Royuela y Macías (1997). Este cuestionario es una herramienta de cribado y no sustituye una valoración médica.
+  </footer>
+</div>
+
+<script>
+(function(){
+  // Número de WhatsApp de destino (formato internacional sin "+", p. ej. "34600000000"). Vacío = el paciente elige el contacto.
+  var WHATSAPP = "";
+
+  var SCALES = {
+    freq: ["Ninguna vez en el último mes","Menos de una vez a la semana","Una o dos veces a la semana","Tres o más veces a la semana"],
+    calidad: ["Muy buena","Bastante buena","Bastante mala","Muy mala"],
+    problema: ["Ningún problema","Solo un leve problema","Un problema","Un grave problema"],
+    companero: ["Solo/a, sin compañero/a de habitación","Con alguien en otra habitación","En la misma habitación, pero en otra cama","En la misma cama"]
+  };
+  var Q5 = [
+    ["q5a","No poder conciliar el sueño en la primera media hora"],
+    ["q5b","Despertarte durante la noche o de madrugada"],
+    ["q5c","Tener que levantarte para ir al baño"],
+    ["q5d","No poder respirar bien"],
+    ["q5e","Toser o roncar ruidosamente"],
+    ["q5f","Sentir frío"],
+    ["q5g","Sentir demasiado calor"],
+    ["q5h","Tener pesadillas o malos sueños"],
+    ["q5i","Sufrir dolores"],
+    ["q5j","Otras razones (descríbelas abajo, si las hay)"]
+  ];
+  var Q10 = [
+    ["q10a","Ronquidos ruidosos"],
+    ["q10b","Pausas largas entre respiraciones mientras duermes"],
+    ["q10c","Sacudidas o espasmos de piernas mientras duermes"],
+    ["q10d","Episodios de desorientación o confusión mientras duermes"],
+    ["q10e","Otras inquietudes mientras duermes (descríbelas abajo)"]
+  ];
+  var letters = "abcdefghij";
+
+  function optsHTML(name, scale){
+    return SCALES[scale].map(function(txt,i){
+      return '<label class="opt"><input type="radio" name="'+name+'" id="'+name+'_'+i+'" value="'+i+'"><span>'+txt+'</span></label>';
+    }).join("");
+  }
+  document.querySelectorAll(".opts[data-name]").forEach(function(el){
+    el.innerHTML = optsHTML(el.dataset.name, el.dataset.scale);
+  });
+  function subList(list, target, extraId, extraLabel){
+    target.innerHTML = list.map(function(it,i){
+      return '<div class="subq" data-q="'+it[0]+'"><p class="t"><b>'+letters[i]+')</b>'+it[1]+'</p><div class="opts four">'+optsHTML(it[0],"freq")+'</div></div>';
+    }).join("") + '<label class="f" for="'+extraId+'">'+extraLabel+'<textarea id="'+extraId+'" rows="2"></textarea></label>';
+  }
+  subList(Q5, document.getElementById("q5list"), "q5jTxt", "Otras razones (opcional)");
+  subList(Q10, document.getElementById("q10list"), "q10eTxt", "Otras inquietudes (opcional)");
+
+  var form = document.getElementById("psqi");
+  var today = new Date();
+  var fecha = document.getElementById("pFecha");
+  fecha.value = today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+
+  function radio(name){ var c = form.querySelector('input[name="'+name+'"]:checked'); return c ? +c.value : null; }
+  function val(id){ return document.getElementById(id).value.trim(); }
+  function num(id){ var v = val(id).replace(",", "."); return v === "" ? null : +v; }
+
+  // Las 19 preguntas autoaplicadas: 1–4, 5a–5j, 6–10
+  var REQUIRED = ["q1","q2","q3","q4"].concat(Q5.map(function(x){return x[0];})).concat(["q6","q7","q8","q9","q10"]);
+  function answered(k){
+    if (k==="q1"||k==="q3") return val(k) !== "";
+    if (k==="q2"||k==="q4") return num(k) !== null && !isNaN(num(k));
+    return radio(k) !== null;
+  }
+  function updateProgress(){
+    var n = REQUIRED.filter(answered).length;
+    document.getElementById("barFill").style.width = (n/REQUIRED.length*100)+"%";
+    document.getElementById("progTxt").textContent = n+" / "+REQUIRED.length;
+    var c = radio("q10");
+    document.getElementById("partnerBlock").hidden = !(c !== null && c > 0);
+  }
+
+  // Borrador local para no perder respuestas si se cierra la página
+  var KEY = "psqi-draft-v1";
+  function save(){
+    try{
+      var d = {};
+      form.querySelectorAll("input,textarea").forEach(function(el){
+        if (el.type === "radio"){ if (el.checked) d[el.name] = el.value; }
+        else d[el.id] = el.value;
+      });
+      localStorage.setItem(KEY, JSON.stringify(d));
+    }catch(e){}
+  }
+  function load(){
+    try{
+      var d = JSON.parse(localStorage.getItem(KEY) || "null"); if (!d) return;
+      Object.keys(d).forEach(function(k){
+        var r = form.querySelector('input[name="'+k+'"][value="'+d[k]+'"]');
+        if (r) r.checked = true;
+        else { var el = document.getElementById(k); if (el && el.type !== "radio") el.value = d[k]; }
+      });
+    }catch(e){}
+  }
+  load(); updateProgress();
+  form.addEventListener("input", function(e){
+    var q = e.target.closest("[data-q]"); if (q) q.classList.remove("missing");
+    var parentQ5 = e.target.closest("#q5list"); if (parentQ5) parentQ5.closest(".q").classList.remove("missing");
+    updateProgress(); save();
+  });
+
+  function toMin(t){ var p = t.split(":"); return (+p[0])*60 + (+p[1]); }
+  function band(v, cuts){ for (var i=0;i<cuts.length;i++) if (v <= cuts[i]) return i; return cuts.length; }
+
+  function score(){
+    var c1 = radio("q6");
+    var q2 = num("q2");
+    var lat = q2 <= 15 ? 0 : q2 <= 30 ? 1 : q2 <= 60 ? 2 : 3;
+    var c2 = band(lat + radio("q5a"), [0,2,4]);
+    var h = num("q4");
+    var c3 = h >= 7 ? 0 : h >= 6 ? 1 : h >= 5 ? 2 : 3;
+    var inBed = (toMin(val("q3")) - toMin(val("q1")) + 1440) % 1440;
+    var eff = inBed > 0 ? Math.min(100, (h*60)/inBed*100) : 0;
+    var c4 = eff >= 85 ? 0 : eff >= 75 ? 1 : eff >= 65 ? 2 : 3;
+    var dist = Q5.slice(1).reduce(function(s,x){ return s + radio(x[0]); }, 0);
+    var c5 = band(dist, [0,9,18]);
+    var c6 = radio("q7");
+    var c7 = band(radio("q8") + radio("q9"), [0,2,4]);
+    return {comps:[c1,c2,c3,c4,c5,c6,c7], total:c1+c2+c3+c4+c5+c6+c7, eff:eff, inBed:inBed, lat:q2, dist:dist};
+  }
+  var COMP_NAMES = ["C1 · Calidad subjetiva del sueño","C2 · Latencia (tiempo en dormirse)","C3 · Duración del sueño","C4 · Eficiencia habitual del sueño","C5 · Perturbaciones del sueño","C6 · Uso de medicación para dormir","C7 · Disfunción durante el día"];
+
+  function fmtH(m){ return Math.floor(m/60)+" h "+String(Math.round(m%60)).padStart(2,"0")+" min"; }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var missing = REQUIRED.filter(function(k){ return !answered(k); });
+    document.querySelectorAll(".q.missing").forEach(function(q){ q.classList.remove("missing"); });
+    var err = document.getElementById("formErr");
+    if (missing.length){
+      missing.forEach(function(k){
+        var el = document.querySelector('[data-q="'+k+'"]');
+        if (el){ el.classList.add("missing"); var parent = el.parentElement.closest(".q"); if (parent) parent.classList.add("missing"); }
+      });
+      err.textContent = "Faltan "+missing.length+" respuesta"+(missing.length>1?"s":"")+". Las he marcado en rojo.";
+      err.hidden = false;
+      var first = document.querySelector('[data-q="'+missing[0]+'"]');
+      if (first) first.scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
+    err.hidden = true;
+    var r = score();
+    var poor = r.total > 5;
+    document.getElementById("rTotal").innerHTML = r.total+"<small> / 21</small>";
+    var pill = document.getElementById("rPill");
+    pill.textContent = poor ? "Calidad de sueño mejorable" : "Buena calidad de sueño";
+    pill.classList.toggle("bad", poor);
+    document.getElementById("rText").textContent = poor
+      ? "Una puntuación mayor de 5 indica que tu descanso no está siendo el adecuado. Lo tendremos en cuenta en tu plan: dormir bien también es parte de la recuperación."
+      : "Una puntuación de 5 o menos indica una buena calidad de sueño. Buen punto de partida para tu recuperación.";
+    document.getElementById("rComps").innerHTML = r.comps.map(function(v,i){
+      var dots = [0,1,2].map(function(j){ return '<i class="'+(j<v?"on":"")+'"></i>'; }).join("");
+      return '<div class="comp"><span>'+COMP_NAMES[i]+'</span><span class="row"><span class="dots">'+dots+'</span><span class="v">'+v+' / 3</span></span></div>';
+    }).join("");
+
+    var nombre = val("pNombre") || "(sin nombre)";
+    var lines = [];
+    lines.push("PSQI – Índice de Calidad de Sueño de Pittsburgh");
+    lines.push("Paciente: "+nombre+(val("pEdad") ? " ("+val("pEdad")+" años)" : ""));
+    lines.push("Fecha: "+val("pFecha"));
+    lines.push("");
+    lines.push("PUNTUACIÓN TOTAL: "+r.total+"/21 → "+(poor ? "mala calidad de sueño (>5)" : "buena calidad de sueño (≤5)"));
+    r.comps.forEach(function(v,i){ lines.push(COMP_NAMES[i]+": "+v); });
+    lines.push("");
+    lines.push("RESPUESTAS");
+    lines.push("1. Hora de acostarse: "+val("q1"));
+    lines.push("2. Minutos en dormirse: "+num("q2"));
+    lines.push("3. Hora de levantarse: "+val("q3"));
+    lines.push("4. Horas dormidas: "+num("q4")+" (tiempo en cama "+fmtH(r.inBed)+", eficiencia "+Math.round(r.eff)+"%)");
+    Q5.forEach(function(x,i){ lines.push("5"+letters[i]+". "+x[1]+": "+SCALES.freq[radio(x[0])]); });
+    if (val("q5jTxt")) lines.push("   Otras razones: "+val("q5jTxt"));
+    lines.push("6. Calidad del sueño: "+SCALES.calidad[radio("q6")]);
+    lines.push("7. Medicación para dormir: "+SCALES.freq[radio("q7")]);
+    lines.push("8. Somnolencia en actividades: "+SCALES.freq[radio("q8")]);
+    lines.push("9. Problema de ánimo: "+SCALES.problema[radio("q9")]);
+    lines.push("10. Duerme: "+SCALES.companero[radio("q10")]);
+    if (radio("q10") > 0){
+      Q10.forEach(function(x,i){ var v = radio(x[0]); if (v !== null) lines.push("10"+letters[i]+". "+x[1]+": "+SCALES.freq[v]); });
+      if (val("q10eTxt")) lines.push("   Otras inquietudes: "+val("q10eTxt"));
+    }
+    var txt = lines.join("\n");
+    document.getElementById("summary").value = txt;
+    document.getElementById("waLink").href = "https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(txt);
+
+    var res = document.getElementById("result");
+    res.hidden = false;
+    res.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    var ta = document.getElementById("summary"), btn = this;
+    function done(){ btn.textContent = "Copiado"; setTimeout(function(){ btn.textContent = "Copiar resumen"; }, 2000); }
+    function fallback(){ ta.focus(); ta.select(); btn.textContent = "Selecciona y copia el texto"; }
+    try{ navigator.clipboard.writeText(ta.value).then(done, fallback); }catch(e){ fallback(); }
+  });
+})();
+</script>
