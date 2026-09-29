@@ -265,7 +265,9 @@ footer{padding-block:40px 0;color:var(--muted);font-size:12px;border-top:1px sol
 <script>
 (function(){
   // Número de WhatsApp de destino (formato internacional sin "+", p. ej. "34600000000"). Vacío = el paciente elige el contacto.
-  var WHATSAPP = "";
+  var WHATSAPP = "34674613651";
+  // URL de la aplicación web de Google Apps Script que guarda cada respuesta en una hoja de cálculo (ver cuestionarios/guardar-respuestas-google-sheets.gs). Vacío = no se guarda.
+  var ENDPOINT = "";
 
   var SCALES = {
     freq: ["Ninguna vez en el último mes","Menos de una vez a la semana","Una o dos veces a la semana","Tres o más veces a la semana"],
@@ -445,6 +447,15 @@ footer{padding-block:40px 0;color:var(--muted);font-size:12px;border-top:1px sol
     var txt = lines.join("\n");
     document.getElementById("summary").value = txt;
     document.getElementById("waLink").href = "https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(txt);
+
+    if (ENDPOINT){
+      var row = {cuestionario:"PSQI", nombre:nombre, edad:val("pEdad"), fecha:val("pFecha"), total:r.total,
+        c1:r.comps[0], c2:r.comps[1], c3:r.comps[2], c4:r.comps[3], c5:r.comps[4], c6:r.comps[5], c7:r.comps[6],
+        eficiencia:Math.round(r.eff), resumen:txt};
+      try{
+        fetch(ENDPOINT, {method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(row)}).catch(function(){});
+      }catch(e){}
+    }
 
     var res = document.getElementById("result");
     res.hidden = false;
