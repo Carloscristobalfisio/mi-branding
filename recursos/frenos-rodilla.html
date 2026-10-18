@@ -185,6 +185,8 @@ a { color: inherit; }
 .btn-light { background: var(--accent); color: #1E2E1A; }
 .btn-ghost { background: transparent; color: #F1F2EE; border-color: #3A3B37; }
 .btn-ghost:hover { border-color: #F1F2EE; }
+.wa-num { font-size: 14px; color: #B7B8B2; user-select: all; }
+.wa-num b { color: #F1F2EE; font-weight: 500; font-variant-numeric: tabular-nums; }
 .copy-status { font-size: 13px; color: var(--accent); min-height: 1.2em; }
 .copy-fallback { width: 100%; min-height: 140px; background: #151614; color: #E6E7E1; border: 1px solid #3A3B37; border-radius: 6px; padding: 12px; font: 13px/1.5 var(--font); }
 .creds { font-size: 13px; color: #8E8F89; border-top: 1px solid #262724; padding-top: 20px; }
@@ -265,9 +267,11 @@ a { color: inherit; }
     </ul>
     <div class="cta-actions">
       <button class="btn btn-light" id="copyBtn" type="button">Copiar mi resultado</button>
-      <a class="btn btn-ghost" href="https://www.instagram.com/carloscristobalfisio/" target="_blank" rel="noopener">Escríbeme en Instagram →</a>
+      <a class="btn btn-ghost" href="https://wa.me/34674613651" target="_blank" rel="noopener">Escríbeme por WhatsApp →</a>
+      <a class="btn btn-ghost" href="https://www.instagram.com/carloscristobalfisio/" target="_blank" rel="noopener">Instagram →</a>
       <a class="btn btn-ghost" href="https://carloscristobalfisioterapia.com" target="_blank" rel="noopener">Pide tu valoración →</a>
     </div>
+    <p class="wa-num">WhatsApp: <b>+34 674 613 651</b></p>
     <div class="copy-status" id="copyStatus"></div>
     <textarea class="copy-fallback" id="copyFallback" readonly hidden aria-label="Resumen para copiar"></textarea>
     <p class="creds">Carlos Cristóbal Mata · Fisioterapeuta especializado en rodilla y LCA · Máster Real Madrid – Universidad Europea · Fisioterapeuta del Algeciras CF · ZOI Clínica Integral, Algeciras · @carloscristobalfisio</p>
@@ -561,7 +565,7 @@ a { color: inherit; }
     const fallback = () => { fb.value = text; fb.hidden = false; fb.focus(); fb.select(); status.textContent = "Selecciona el texto y cópialo para enviármelo."; };
     try {
       navigator.clipboard.writeText(text).then(() => {
-        fb.hidden = true; status.textContent = "Copiado. Pégalo en un mensaje para mí en Instagram o WhatsApp.";
+        fb.hidden = true; status.textContent = "Copiado. Pégalo en un WhatsApp al +34 674 613 651.";
       }, fallback);
     } catch (e) { fallback(); }
   });
