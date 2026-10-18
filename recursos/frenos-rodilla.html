@@ -289,9 +289,7 @@ a { color: inherit; }
   const FRENOS = [
     { id: "carga", name: "Respuesta a la carga", tag: "Inflamación y descanso",
       qs: [
-        { text: "¿Se te hincha la rodilla después de entrenar, caminar mucho o al final del día?", opts: FREQ },
-        { text: "¿El dolor o la hinchazón empeoran al día siguiente de un esfuerzo?", opts: FREQ },
-        { text: "¿Cómo duermes últimamente?", opts: ["7–9 h y descanso bien", "6–7 h o me despierto a menudo", "Menos de 6 h", "Duermo mal y voy con mucho estrés"] }
+        { text: "¿Se te hincha la rodilla o te duele más al día siguiente de entrenar o caminar mucho?", opts: FREQ }
       ],
       why: "Si la rodilla se inflama cada vez que haces algo, el problema no suele ser el ejercicio sino la dosis. La hinchazón inhibe el cuádriceps: el músculo se apaga aunque tú lo intentes activar. Ajustar volumen e intensidad suele desbloquear semanas de estancamiento.",
       actions: [
@@ -301,9 +299,7 @@ a { color: inherit; }
       ] },
     { id: "movilidad", name: "Extensión y movilidad", tag: "Rango de movimiento",
       qs: [
-        { text: "Tumbado boca arriba con la pierna estirada, ¿la parte de atrás de la rodilla toca el suelo igual que la otra?", hint: "Compara las dos piernas. Una diferencia de pocos grados ya cuenta.", opts: ["Sí, igual que la otra", "No lo sé", "Le falta un poco", "No, se queda doblada"] },
-        { text: "¿Puedes doblar la rodilla del todo, con el talón cerca del glúteo?", opts: ["Sí, sin problema", "Me falta algo", "Me falta bastante", "Está muy limitada"] },
-        { text: "¿Notas la rodilla rígida al levantarte o después de estar sentado un rato?", opts: FREQ }
+        { text: "Tumbado boca arriba con la pierna estirada, ¿la parte de atrás de la rodilla toca el suelo igual que la otra?", hint: "Compara las dos piernas. Una diferencia de pocos grados ya cuenta.", opts: ["Sí, igual que la otra", "No lo sé", "Le falta un poco", "No, se queda doblada"] }
       ],
       why: "Una rodilla que no estira del todo camina cojeando sin que lo notes. Eso carga la parte delantera, activa peor el cuádriceps y mantiene el dolor. La extensión completa es lo primero que hay que recuperar: si falta, todo lo demás se construye encima de una base torcida.",
       actions: [
@@ -313,9 +309,7 @@ a { color: inherit; }
       ] },
     { id: "plan", name: "Plan y progresión", tag: "Dirección del proceso",
       qs: [
-        { text: "¿Sigues un plan escrito que cambie semana a semana?", opts: ["Sí, con pautas claras", "Más o menos", "Hago lo que recuerdo", "No tengo plan"] },
-        { text: "¿Cuánto tiempo llevas haciendo los mismos ejercicios?", opts: ["Cambian cada pocas semanas", "1–2 meses", "Más de 2 meses", "No hago ejercicios"] },
-        { text: "¿Alternas semanas de hacer mucho con parones?", opts: FREQ }
+        { text: "¿Sigues un plan que progrese semana a semana?", opts: ["Sí, con pautas claras", "Más o menos", "Repito los mismos ejercicios desde hace meses", "No tengo plan"] }
       ],
       why: "Muchas recuperaciones no se frenan por la lesión, sino por la falta de dirección. Repetir los mismos ejercicios durante meses mantiene la rodilla, pero no la hace progresar. Y los picos de carga seguidos de parones son una de las causas más comunes de recaída.",
       actions: [
@@ -325,7 +319,6 @@ a { color: inherit; }
       ] },
     { id: "fuerza", name: "Fuerza", tag: "Cuádriceps y cadena",
       qs: [
-        { text: "¿Notas el muslo de la pierna lesionada más delgado o más blando?", opts: ["No", "Un poco", "Bastante", "Mucho"] },
         { text: "¿Puedes levantarte de una silla solo con la pierna lesionada, sin ayudarte de las manos?", opts: ["Sí, varias veces seguidas", "Una o dos veces", "Con mucho esfuerzo", "No puedo"] },
         { text: "¿Cómo entrenas la fuerza de la pierna?", opts: ["Con carga que me cuesta, 2–3 días por semana", "Con gomas o peso corporal", "Algo suelto, sin constancia", "No entreno fuerza"] }
       ],
@@ -337,9 +330,7 @@ a { color: inherit; }
       ] },
     { id: "control", name: "Control y estabilidad", tag: "Cómo usas la fuerza",
       qs: [
-        { text: "Al bajar escaleras o hacer una sentadilla a una pierna, ¿la rodilla se te va hacia dentro?", opts: ["No", "Un poco", "Bastante", "Mucho, o no puedo hacerlo"] },
-        { text: "¿Sientes que la rodilla «falla» o se te va?", opts: FREQ },
-        { text: "¿Aguantas 30 segundos en equilibrio sobre la pierna lesionada?", opts: ["Sí, con facilidad", "Sí, pero me cuesta", "Me tambaleo mucho", "No llego"] }
+        { text: "Al bajar escaleras o hacer una sentadilla a una pierna, ¿la rodilla se te va hacia dentro o notas que falla?", opts: FREQ }
       ],
       why: "Tener fuerza no garantiza usarla bien. Si la rodilla se hunde hacia dentro o notas fallos, tu sistema nervioso todavía no controla la articulación en los gestos rápidos. Esto pesa mucho al volver a correr, saltar o cambiar de dirección.",
       actions: [
@@ -350,8 +341,7 @@ a { color: inherit; }
     { id: "confianza", name: "Confianza", tag: "Miedo a volver a lesionarte",
       qs: [
         { text: "¿Evitas girar, saltar o agacharte por miedo a hacerte daño?", opts: FREQ },
-        { text: "Del 0 al 10, ¿cuánto confías hoy en tu rodilla?", opts: ["8–10", "6–7", "3–5", "0–2"] },
-        { text: "¿Piensas que la rodilla no volverá a ser la misma?", opts: FREQ }
+        { text: "Del 0 al 10, ¿cuánto confías hoy en tu rodilla?", opts: ["8–10", "6–7", "3–5", "0–2"] }
       ],
       why: "El miedo a volver a lesionarse es uno de los motivos más frecuentes por los que la gente no vuelve a su deporte tras una lesión de rodilla, incluso con la rodilla físicamente preparada. No es falta de carácter. Es una respuesta lógica que se entrena igual que la fuerza.",
       actions: [
@@ -373,10 +363,10 @@ a { color: inherit; }
   // Respuestas de muestra para el informe de ejemplo (índice de opción por pregunta).
   const EXAMPLE = {
     ctx: { lesion: 0, tiempo: 2, objetivo: 2 },
-    frenos: { carga: [1, 1, 1], movilidad: [0, 0, 1], plan: [2, 2, 1], fuerza: [2, 1, 1], control: [1, 1, 1], confianza: [2, 2, 1] }
+    frenos: { carga: [1], movilidad: [0], plan: [2], fuerza: [1, 2], control: [1], confianza: [2, 2] }
   };
 
-  const STORE = "frenos-rodilla-v2";
+  const STORE = "frenos-rodilla-v3";
   const fresh = () => ({ ctx: {}, frenos: {}, alarms: [], step: 0, done: false });
   let state = fresh();
   try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && s.frenos) state = Object.assign(fresh(), s); } catch (e) {}
