@@ -98,31 +98,46 @@ a { color: inherit; }
 .step-head p { color: var(--muted); max-width: 56ch; }
 @media (max-width: 520px) { .step-num { font-size: 40px; } }
 
-/* Preguntas */
-.q { display: grid; gap: 12px; border: 0; margin: 0; padding: 0; min-width: 0; }
-.q legend { font-weight: 500; font-size: 16px; padding: 0; margin-bottom: 12px; }
-.q .hint { font-size: 13px; color: var(--muted); margin-top: -6px; }
-.opts { display: flex; flex-wrap: wrap; gap: 8px; }
-.opt { position: relative; }
-.opt input { position: absolute; opacity: 0; pointer-events: none; }
-.opt label {
-  display: block; cursor: pointer; padding: 9px 14px; border-radius: 999px;
-  border: 1px solid var(--line); background: var(--surface); font-size: 14px; line-height: 1.3;
-  transition: border-color .15s, background .15s;
+/* Cuestionario: una pregunta cada vez */
+.quiz {
+  display: grid; gap: 24px; padding: 32px; min-height: 420px; align-content: start;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
 }
-.opt label:hover { border-color: var(--muted); }
-.opt input:checked + label { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
-:root[data-theme="dark"] .opt input:checked + label { background: var(--accent); color: #1E2E1A; border-color: var(--accent); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .opt input:checked + label { background: var(--accent); color: #1E2E1A; border-color: var(--accent); } }
-.opt input:focus-visible + label { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
-
-.qs { display: grid; gap: 32px; }
-.freno { display: grid; gap: 28px; padding: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
-.freno-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.freno-head h3 { font-size: 20px; font-weight: 600; }
-.freno-head .tag { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-.frenos { display: grid; gap: 16px; }
-@media (max-width: 520px) { .freno { padding: 20px 16px; } }
+.quiz-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.phase { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); }
+.count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.quiz-q { font-size: clamp(22px, 4.2vw, 28px); font-weight: 400; line-height: 1.25; letter-spacing: -0.01em; }
+.quiz-q:focus { outline: none; }
+.hint { font-size: 14px; color: var(--muted); margin-top: -12px; }
+.choices { display: grid; gap: 10px; }
+.choice {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  width: 100%; text-align: left; cursor: pointer;
+  font: inherit; font-size: 16px; line-height: 1.35; color: var(--fg);
+  padding: 15px 18px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg);
+  transition: border-color .15s, background .15s, color .15s;
+}
+.choice::after { content: "→"; color: var(--faint); transition: color .15s; }
+.choice:hover { border-color: var(--muted); }
+.choice:hover::after { color: var(--fg); }
+.choice.is-selected { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.choice.is-selected::after { content: "✓"; color: var(--accent); }
+:root[data-theme="dark"] .choice.is-selected { background: var(--accent); color: #1E2E1A; border-color: var(--accent); }
+:root[data-theme="dark"] .choice.is-selected::after { color: #1E2E1A; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .choice.is-selected { background: var(--accent); color: #1E2E1A; border-color: var(--accent); }
+  :root:not([data-theme="light"]) .choice.is-selected::after { color: #1E2E1A; }
+}
+.quiz-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.link-btn { background: none; border: 0; padding: 6px 0; font: inherit; font-size: 14px; color: var(--muted); cursor: pointer; }
+.link-btn:hover { color: var(--fg); }
+.link-btn[disabled] { visibility: hidden; }
+.btn-dark { background: var(--ink); color: var(--on-ink); }
+:root[data-theme="dark"] .btn-dark { background: var(--accent); color: #1E2E1A; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn-dark { background: var(--accent); color: #1E2E1A; } }
+.quiz-anim { animation: qin .25s ease both; }
+@keyframes qin { from { opacity: .4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 520px) { .quiz { padding: 24px 16px; min-height: 0; } }
 
 /* Señales de alarma */
 .checks { display: grid; gap: 10px; }
@@ -212,38 +227,15 @@ a { color: inherit; }
     <h1>¿Qué está frenando tu recuperación de <em>rodilla?</em></h1>
     <p class="lede">Si llevas semanas haciendo ejercicios y la rodilla no termina de responder, casi siempre hay uno o dos frenos concretos detrás. Responde lo que te pregunto a continuación y te digo cuál es el tuyo, por qué pasa y por dónde empezar esta semana.</p>
     <div class="meta">
-      <div><b>5 min</b><span>Duración</span></div>
+      <div><b>2 min</b><span>Duración</span></div>
       <div><b id="qCount">18</b><span>Preguntas</span></div>
       <div><b>6</b><span>Frenos que reviso</span></div>
       <div><b>1</b><span>Hoja de ruta para ti</span></div>
     </div>
   </section>
 
-  <section class="wrap step" id="caso">
-    <div class="step-head">
-      <div class="step-num">01</div>
-      <h2>Tu caso</h2>
-      <p>Lo mismo que te preguntaría al empezar una valoración.</p>
-    </div>
-    <div class="qs" id="contextQs"></div>
-  </section>
-
-  <section class="wrap step" id="frenos">
-    <div class="step-head">
-      <div class="step-num">02</div>
-      <h2>Los seis frenos</h2>
-      <p>Responde pensando en las dos últimas semanas. Si dudas entre dos opciones, elige la que más se parezca a un día normal.</p>
-    </div>
-    <div class="frenos" id="frenoQs"></div>
-  </section>
-
-  <section class="wrap step" id="alarmas">
-    <div class="step-head">
-      <div class="step-num">03</div>
-      <h2>Señales que no son un freno</h2>
-      <p>Algunas cosas no se arreglan con ejercicio y conviene que las vea un profesional en persona. Marca las que te pasen ahora.</p>
-    </div>
-    <div class="checks" id="alarmChecks"></div>
+  <section class="wrap step" id="test">
+    <div class="quiz" id="quiz"></div>
   </section>
 
   <section class="wrap step" id="informe">
@@ -384,65 +376,95 @@ a { color: inherit; }
     frenos: { carga: [1, 1, 1], movilidad: [0, 0, 1], plan: [2, 2, 1], fuerza: [2, 1, 1], control: [1, 1, 1], confianza: [2, 2, 1] }
   };
 
-  const STORE = "frenos-rodilla-v1";
-  let state = { ctx: {}, frenos: {}, alarms: [] };
-  try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && s.frenos) state = s; } catch (e) {}
+  const STORE = "frenos-rodilla-v2";
+  const fresh = () => ({ ctx: {}, frenos: {}, alarms: [], step: 0, done: false });
+  let state = fresh();
+  try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && s.frenos) state = Object.assign(fresh(), s); } catch (e) {}
   const save = () => { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} };
 
-  const el = (tag, attrs, html) => { const n = document.createElement(tag); Object.assign(n, attrs || {}); if (html != null) n.innerHTML = html; return n; };
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  function radioGroup(name, q, checked, onPick) {
-    const fs = el("fieldset", { className: "q" });
-    fs.appendChild(el("legend", {}, esc(q.text)));
-    if (q.hint) fs.appendChild(el("p", { className: "hint" }, esc(q.hint)));
-    const opts = el("div", { className: "opts" });
-    q.opts.forEach((label, i) => {
-      const id = name + "-" + i;
-      const wrap = el("div", { className: "opt" });
-      const input = el("input", { type: "radio", name, id, value: i, checked: checked === i });
-      input.addEventListener("change", () => onPick(i));
-      wrap.appendChild(input);
-      wrap.appendChild(el("label", { htmlFor: id }, esc(label)));
-      opts.appendChild(wrap);
-    });
-    fs.appendChild(opts);
-    return fs;
+  // Todas las preguntas en una sola fila; la última pantalla son las señales de alarma.
+  const STEPS = [
+    ...CONTEXT.map(q => ({ phase: "01 · Tu caso", q,
+      get: () => state.ctx[q.id], set: i => { state.ctx[q.id] = i; } })),
+    ...FRENOS.flatMap(f => f.qs.map((q, qi) => ({ phase: "02 · " + f.name, q,
+      get: () => (state.frenos[f.id] || [])[qi],
+      set: i => { (state.frenos[f.id] = state.frenos[f.id] || [])[qi] = i; } }))),
+    { phase: "03 · Señales de alarma", alarms: true }
+  ];
+  const TOTAL = STEPS.length - 1;
+  document.getElementById("qCount").textContent = TOTAL;
+  state.step = Math.min(Math.max(0, state.step | 0), STEPS.length - 1);
+
+  const quiz = document.getElementById("quiz");
+  let advancing = false;
+
+  function renderQuiz(focus) {
+    let html;
+    if (state.done) {
+      html = `<div class="quiz-top"><span class="phase">Completado</span><span class="count">${TOTAL} de ${TOTAL}</span></div>
+        <h2 class="quiz-q" tabindex="-1">Listo. Tu informe está justo debajo.</h2>
+        <p class="hint" style="margin-top:0">Si quieres que lo revisemos juntos, cópialo al final de la página y mándamelo por WhatsApp.</p>
+        <div class="quiz-nav"><button class="btn btn-dark" type="button" data-act="report">Ver mi informe ↓</button>
+        <button class="link-btn" type="button" data-act="reset">Repetir el test</button></div>`;
+    } else {
+      const s = STEPS[state.step];
+      const top = `<div class="quiz-top"><span class="phase">${esc(s.phase)}</span><span class="count">${s.alarms ? "Último paso" : `Pregunta ${state.step + 1} de ${TOTAL}`}</span></div>`;
+      const back = `<button class="link-btn" type="button" data-act="back" ${state.step === 0 ? "disabled" : ""}>← Anterior</button>`;
+      if (s.alarms) {
+        html = top + `<h2 class="quiz-q" tabindex="-1">¿Te pasa ahora alguna de estas cosas?</h2>
+          <p class="hint">No son un freno normal y conviene que las vea un profesional en persona. Si no te pasa ninguna, sigue.</p>
+          <div class="checks">${ALARMS.map((a, i) => `<label class="check" for="alarm-${i}"><input type="checkbox" id="alarm-${i}" data-alarm="${i}" ${state.alarms.includes(i) ? "checked" : ""}><span>${esc(a)}</span></label>`).join("")}</div>
+          <div class="quiz-nav">${back}<button class="btn btn-dark" type="button" data-act="finish">Ver mi informe →</button></div>`;
+      } else {
+        const cur = s.get();
+        html = top + `<h2 class="quiz-q" tabindex="-1">${esc(s.q.text)}</h2>` +
+          (s.q.hint ? `<p class="hint">${esc(s.q.hint)}</p>` : "") +
+          `<div class="choices">${s.q.opts.map((o, i) => `<button class="choice${cur === i ? " is-selected" : ""}" type="button" data-pick="${i}">${esc(o)}</button>`).join("")}</div>
+          <div class="quiz-nav">${back}${cur != null ? `<button class="link-btn" type="button" data-act="next">Siguiente →</button>` : ""}</div>`;
+      }
+    }
+    quiz.innerHTML = html;
+    quiz.classList.remove("quiz-anim"); void quiz.offsetWidth; quiz.classList.add("quiz-anim");
+    if (focus) {
+      quiz.querySelector(".quiz-q").focus({ preventScroll: true });
+      const r = quiz.getBoundingClientRect();
+      if (r.top < 60 || r.top > innerHeight * 0.5) quiz.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 
-  // Render preguntas
-  const ctxBox = document.getElementById("contextQs");
-  CONTEXT.forEach(q => ctxBox.appendChild(radioGroup("ctx-" + q.id, q, state.ctx[q.id], i => { state.ctx[q.id] = i; update(); })));
+  function go(step) { state.step = step; advancing = false; renderQuiz(true); save(); }
 
-  const frBox = document.getElementById("frenoQs");
-  FRENOS.forEach(f => {
-    const card = el("div", { className: "freno" });
-    card.appendChild(el("div", { className: "freno-head" }, `<h3>${esc(f.name)}</h3><span class="tag">${esc(f.tag)}</span>`));
-    f.qs.forEach((q, qi) => {
-      const cur = (state.frenos[f.id] || [])[qi];
-      card.appendChild(radioGroup(`fr-${f.id}-${qi}`, q, cur, i => {
-        (state.frenos[f.id] = state.frenos[f.id] || [])[qi] = i; update();
-      }));
-    });
-    frBox.appendChild(card);
-  });
-
-  const alBox = document.getElementById("alarmChecks");
-  ALARMS.forEach((a, i) => {
-    const lab = el("label", { className: "check", htmlFor: "alarm-" + i });
-    const input = el("input", { type: "checkbox", id: "alarm-" + i, checked: state.alarms.includes(i) });
-    input.addEventListener("change", () => {
-      state.alarms = state.alarms.filter(x => x !== i);
-      if (input.checked) state.alarms.push(i);
+  quiz.addEventListener("click", e => {
+    const pick = e.target.closest("[data-pick]");
+    if (pick && !advancing) {
+      const s = STEPS[state.step];
+      s.set(+pick.dataset.pick);
+      quiz.querySelectorAll(".choice").forEach(b => b.classList.toggle("is-selected", b === pick));
       update();
-    });
-    lab.appendChild(input);
-    lab.appendChild(el("span", {}, esc(a)));
-    alBox.appendChild(lab);
+      advancing = true;
+      setTimeout(() => go(state.step + 1), 280);
+      return;
+    }
+    const act = e.target.closest("[data-act]")?.dataset.act;
+    if (act === "back") go(state.step - 1);
+    else if (act === "next") go(state.step + 1);
+    else if (act === "finish") { state.done = true; renderQuiz(false); update(); document.getElementById("informe").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    else if (act === "report") document.getElementById("informe").scrollIntoView({ behavior: "smooth", block: "start" });
+    else if (act === "reset") { state = fresh(); renderQuiz(true); update(); }
   });
 
-  const TOTAL = CONTEXT.length + FRENOS.reduce((n, f) => n + f.qs.length, 0);
-  document.getElementById("qCount").textContent = TOTAL;
+  quiz.addEventListener("change", e => {
+    const box = e.target.closest("[data-alarm]");
+    if (!box) return;
+    const i = +box.dataset.alarm;
+    state.alarms = state.alarms.filter(x => x !== i);
+    if (box.checked) state.alarms.push(i);
+    update();
+  });
+
+  renderQuiz(false);
 
   function answered(s) {
     let n = CONTEXT.filter(q => s.ctx[q.id] != null).length;
