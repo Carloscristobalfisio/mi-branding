@@ -4,220 +4,121 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,300..500&display=swap">
 <style>
-/* Layout: una columna estrecha tipo protocolo, fases numeradas 01–05, resultado y CTA oscuro al final */
+/* Layout: test tipo quiz, una pregunta por pantalla, botones grandes; resultado con fase, problemas y CTA oscuro */
 :root {
   --bg: #FAFAF8;
   --surface: #FFFFFF;
   --ink: #1A1A1A;
   --muted: #6B6B6B;
-  --faint: #B9BBB4;
+  --faint: #C9CBC4;
   --line: #E8E8E4;
   --accent: #C8E6C3;
   --accent-ink: #5A7A52;
   --no: #D9534F;
-  --no-soft: #FBEAE9;
-  --unk: #8A7A3C;
-  --unk-soft: #F4EFD9;
   --dark: #0A0A0A;
-  --on-dark: #FFFFFF;
-  --on-dark-muted: #A7A9A2;
   --wa: #25D366;
   --font: "DM Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0E0F0D; --surface: #161815; --ink: #F1F2EE; --muted: #9C9F97; --faint: #42463F;
-    --line: #262923; --accent: #2E3F2B; --accent-ink: #B5D6AF; --no: #E57A76; --no-soft: #3A1F1E;
-    --unk: #D9C27A; --unk-soft: #33301F; --dark: #000000; --on-dark: #FFFFFF; --on-dark-muted: #9C9F97;
+    --bg: #0E0F0D; --surface: #171916; --ink: #F1F2EE; --muted: #9C9F97; --faint: #3A3D36;
+    --line: #262923; --accent: #2E3F2B; --accent-ink: #B5D6AF; --no: #E57A76; --dark: #000000;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0E0F0D; --surface: #161815; --ink: #F1F2EE; --muted: #9C9F97; --faint: #42463F;
-  --line: #262923; --accent: #2E3F2B; --accent-ink: #B5D6AF; --no: #E57A76; --no-soft: #3A1F1E;
-  --unk: #D9C27A; --unk-soft: #33301F; --dark: #000000; --on-dark: #FFFFFF; --on-dark-muted: #9C9F97;
+  --bg: #0E0F0D; --surface: #171916; --ink: #F1F2EE; --muted: #9C9F97; --faint: #3A3D36;
+  --line: #262923; --accent: #2E3F2B; --accent-ink: #B5D6AF; --no: #E57A76; --dark: #000000;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--ink);
-  font-family: var(--font); font-size: 16px; line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-}
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 .wrap {
-  max-width: 720px; margin: 0 auto;
+  max-width: 560px; margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
 p { margin: 0; }
-em { font-style: italic; }
 button { font: inherit; color: inherit; cursor: pointer; }
-:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
 
-.eyebrow {
-  font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--accent-ink);
-}
-.badge {
-  display: inline-block; background: var(--accent); color: var(--accent-ink);
-  font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
-  padding: 5px 10px; border-radius: 999px;
-}
-
-/* Cabecera */
-.top { border-bottom: 1px solid var(--line); }
 .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 16px; }
-.brand { font-weight: 600; font-size: 15px; letter-spacing: -.01em; }
+.brand { font-weight: 600; font-size: 15px; }
 .brand span { display: block; font-weight: 400; font-size: 12.5px; color: var(--muted); }
 .handle { font-size: 13px; color: var(--muted); text-decoration: none; }
-.handle:hover { color: var(--ink); }
 
-/* Hero */
-.hero .wrap { padding-block: 48px 32px; display: grid; gap: 20px; }
-.hero h1 { font-size: clamp(36px, 8vw, 58px); font-weight: 300; line-height: 1.05; letter-spacing: -.03em; }
-.hero h1 em { font-weight: 400; }
-.lead { color: var(--muted); font-size: 17px; max-width: 58ch; }
-.how { display: grid; gap: 10px; padding: 0; margin: 4px 0 0; list-style: none; }
-.how li { display: grid; grid-template-columns: 34px 1fr; gap: 8px; font-size: 15px; }
-.how b { font-weight: 200; font-size: 22px; color: var(--faint); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.screen { padding-block: 28px 56px; display: grid; gap: 22px; }
+.badge { justify-self: start; background: var(--accent); color: var(--accent-ink); font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; padding: 6px 11px; border-radius: 999px; }
+.big { font-size: clamp(38px, 10vw, 54px); font-weight: 300; line-height: 1.05; letter-spacing: -.03em; }
+.big em { font-weight: 400; }
+.sub { color: var(--muted); font-size: 18px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 15px; color: var(--muted); }
+.facts b { color: var(--ink); font-weight: 600; }
 
-.surgery {
-  display: grid; gap: 6px; background: var(--surface); border: 1px solid var(--line);
-  border-radius: 14px; padding: 16px 18px; margin-top: 8px;
-}
-.surgery label { font-weight: 600; font-size: 15px; }
-.surgery small { color: var(--muted); font-size: 13.5px; }
-.surgery .row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
-.surgery input {
-  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
-  border-radius: 10px; padding: 9px 12px; min-height: 44px;
-}
-.since { font-size: 14px; color: var(--accent-ink); font-weight: 500; }
-
-/* Fases */
-.phases { display: grid; gap: 28px; padding-block: 16px 40px; }
-.phase { border-top: 1px solid var(--ink); padding-top: 18px; display: grid; gap: 14px; }
-.phase-head { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 16px; align-items: start; }
-.phase-num { font-size: 56px; font-weight: 200; line-height: .9; color: var(--faint); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-.phase-head h2 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
-.phase-head p { color: var(--muted); font-size: 14.5px; }
-.chip {
-  font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-  padding: 5px 9px; border-radius: 999px; white-space: nowrap; border: 1px solid var(--line); color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-.chip[data-s="done"] { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
-.chip[data-s="current"] { border-color: var(--ink); color: var(--ink); }
-.phase[data-s="later"] .items { opacity: .62; }
-.phase[data-s="later"] .items:focus-within, .phase[data-s="later"] .items:hover { opacity: 1; }
-
-.items { list-style: none; margin: 0; padding: 0; display: grid; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); transition: opacity .2s; }
-.item { display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; padding: 14px 16px; border-top: 1px solid var(--line); min-width: 0; }
-.item:first-child { border-top: 0; }
-.item-text { min-width: 0; display: grid; gap: 3px; }
-.item-title { font-weight: 500; font-size: 15.5px; }
-.item-title .tag { font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: 2px; white-space: nowrap; }
-.item-help { color: var(--muted); font-size: 13.5px; line-height: 1.45; }
-.item-auto { color: var(--accent-ink); font-size: 13px; font-weight: 500; }
-
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); }
-.seg button {
-  border: 0; background: transparent; padding: 0 12px; min-height: 40px; min-width: 52px;
-  font-size: 13.5px; font-weight: 500; color: var(--muted); border-left: 1px solid var(--line);
-  transition: background .15s, color .15s;
-}
-.seg button:first-child { border-left: 0; }
-.seg button:hover:not(:disabled) { color: var(--ink); }
-.seg button[aria-pressed="true"][data-v="y"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
-.seg button[aria-pressed="true"][data-v="n"] { background: var(--no-soft); color: var(--no); font-weight: 600; }
-.seg button[aria-pressed="true"][data-v="u"] { background: var(--unk-soft); color: var(--unk); font-weight: 600; }
-.seg button:disabled { cursor: default; }
-.seg button:disabled:not([aria-pressed="true"]) { opacity: .4; }
-
-@media (max-width: 520px) {
-  .item { grid-template-columns: 1fr; }
-  .seg { width: 100%; }
-  .seg button { flex: 1; }
-  .phase-num { font-size: 44px; }
-}
-
-/* Resultado */
-.result { padding-block: 8px 40px; }
-.result .wrap { display: grid; gap: 22px; }
-.track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-.track div { display: grid; gap: 6px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.track i { display: block; height: 6px; border-radius: 3px; background: var(--line); }
-.track [data-s="done"] i { background: var(--accent-ink); }
-.track [data-s="current"] i { background: linear-gradient(90deg, var(--accent-ink) var(--p, 0%), var(--line) var(--p, 0%)); }
-.track [data-s="current"] { color: var(--ink); font-weight: 600; }
-.result h2 { font-size: clamp(30px, 6.5vw, 44px); font-weight: 300; letter-spacing: -.025em; line-height: 1.08; }
-.result h2 em { font-weight: 400; }
-.result-body { font-size: 16.5px; color: var(--muted); max-width: 60ch; }
-.lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-.list { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: var(--surface); display: grid; gap: 10px; align-content: start; }
-.list h3 { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
-.list ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 15px; }
-.list li { display: grid; grid-template-columns: 14px 1fr; gap: 8px; }
-.list li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; margin-top: 8px; background: currentColor; }
-.list.no li::before { color: var(--no); }
-.list.unk li::before { color: var(--unk); }
-.list.empty li::before { color: var(--faint); }
-
-/* CTA */
-.cta { background: var(--dark); color: var(--on-dark); }
-.cta .wrap { padding-block: 52px; display: grid; gap: 18px; }
-.cta .eyebrow { color: #C8E6C3; }
-.cta h2 { font-size: clamp(30px, 7vw, 46px); font-weight: 300; letter-spacing: -.025em; line-height: 1.06; }
-.cta p { color: var(--on-dark-muted); font-size: 16.5px; max-width: 56ch; }
-.cta-points { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 0; margin: 0; list-style: none; font-size: 14px; color: var(--on-dark); }
-.cta-points li::before { content: "→ "; color: #C8E6C3; }
-.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 50px; padding: 0 22px; border-radius: 999px; font-weight: 600; font-size: 15.5px;
-  text-decoration: none; border: 1px solid transparent; transition: transform .15s, background .15s;
+  min-height: 56px; padding: 0 26px; border-radius: 999px; border: 1px solid transparent;
+  font-weight: 600; font-size: 17px; text-decoration: none; transition: transform .15s;
 }
 .btn:hover { transform: translateY(-1px); }
-.btn-primary { background: #FFFFFF; color: #0A0A0A; }
+.btn-ink { background: var(--ink); color: var(--bg); }
 .btn-wa { background: var(--wa); color: #0A0A0A; }
-.btn-ghost { background: transparent; color: var(--on-dark); border-color: #3A3A3A; }
-.btn-ghost:hover { border-color: #FFFFFF; }
-.copy-note { font-size: 13.5px; color: var(--on-dark-muted); min-height: 1.4em; }
-.summary-box {
-  width: 100%; min-height: 120px; background: #141414; color: #E8E8E4; border: 1px solid #2A2A2A;
-  border-radius: 12px; padding: 12px 14px; font: 13.5px/1.5 var(--font); resize: vertical;
-}
+.btn-light { background: #FFFFFF; color: #0A0A0A; }
+.btn-ghost { background: transparent; color: #FFFFFF; border-color: #3A3A3A; }
+.full { width: 100%; }
 
-/* Pie */
-.foot .wrap { padding-block: 26px 40px; display: grid; gap: 14px; font-size: 13px; color: var(--muted); }
-.foot .row { display: flex; flex-wrap: wrap; gap: 10px 18px; justify-content: space-between; align-items: center; }
-.link-btn { background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; color: var(--muted); font-size: 13px; }
-.link-btn:hover { color: var(--ink); }
-.confirm { display: inline-flex; gap: 10px; align-items: center; }
-
-/* Barra fija inferior */
-.dock {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid var(--line);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  transition: transform .25s;
+/* Quiz */
+.bar { display: grid; gap: 8px; }
+.bar-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.back { background: none; border: 0; padding: 6px 0; color: var(--muted); font-size: 14px; }
+.back:hover { color: var(--ink); }
+.track { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.track i { display: block; height: 100%; background: var(--accent-ink); border-radius: 3px; transition: width .3s; }
+.q { font-size: clamp(27px, 7vw, 34px); font-weight: 500; line-height: 1.15; letter-spacing: -.02em; }
+.hint { color: var(--muted); font-size: 16px; margin-top: -8px; }
+.opts { display: grid; gap: 10px; }
+.opt {
+  text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 16px;
+  padding: 17px 20px; font-size: 18px; font-weight: 500; min-height: 62px;
+  transition: border-color .15s, background .15s;
 }
-.dock.away { transform: translateY(110%); }
-.dock .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px; }
-.dock-text { font-size: 14px; min-width: 0; }
-.dock-text b { font-weight: 600; }
-.dock-text span { color: var(--muted); }
-.dock a { flex: none; background: var(--ink); color: var(--bg); text-decoration: none; border-radius: 999px; padding: 10px 16px; font-weight: 600; font-size: 14px; }
-main { padding-bottom: 72px; }
+.opt:hover { border-color: var(--ink); }
+.opt[aria-pressed="true"] { border-color: var(--accent-ink); background: var(--accent); color: var(--accent-ink); }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
-}
-html { scroll-behavior: smooth; }
+/* Resultado */
+.phase-dots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.phase-dots div { display: grid; gap: 6px; font-size: 12.5px; color: var(--muted); text-align: center; }
+.phase-dots i { height: 8px; border-radius: 4px; background: var(--line); }
+.phase-dots .done i { background: var(--accent-ink); }
+.phase-dots .now i { background: var(--ink); }
+.phase-dots .now { color: var(--ink); font-weight: 700; }
+.phase-name { font-size: 19px; font-weight: 500; }
+.got { display: flex; flex-wrap: wrap; gap: 8px; }
+.got span { background: var(--accent); color: var(--accent-ink); font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 999px; }
+.got span::before { content: "✓ "; }
+h3.label { font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.probs { display: grid; gap: 12px; }
+.prob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; display: grid; gap: 8px; }
+.prob b { font-size: 18px; font-weight: 600; display: block; }
+.prob b::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--no); margin-right: 10px; vertical-align: 2px; }
+.prob p { color: var(--muted); font-size: 16px; }
+.prob p::before { content: "→ "; color: var(--accent-ink); font-weight: 700; }
+
+.cta { background: var(--dark); color: #FFFFFF; border-radius: 22px; padding: 30px 24px; display: grid; gap: 14px; }
+.cta h2 { font-size: clamp(28px, 7.5vw, 38px); font-weight: 300; line-height: 1.08; letter-spacing: -.025em; }
+.cta h2 em { font-weight: 400; }
+.cta p { color: #B4B6AF; font-size: 17px; }
+.cta .btns { display: grid; gap: 10px; margin-top: 6px; }
+.cta small { color: #B4B6AF; font-size: 14px; text-align: center; }
+.cta small b { color: #C8E6C3; font-weight: 600; }
+.again { justify-self: center; background: none; border: 0; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; font-size: 15px; padding: 8px; }
+.legal { color: var(--muted); font-size: 13px; text-align: center; }
+
+.fade { animation: in .28s ease-out; }
+@keyframes in { from { opacity: .4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fade { animation: none; } * { transition: none !important; } }
 </style>
 
 <header class="top">
@@ -227,330 +128,142 @@ html { scroll-behavior: smooth; }
   </div>
 </header>
 
-<main>
-  <section class="hero">
-    <div class="wrap">
-      <span class="badge">Checklist · Ligamento cruzado anterior</span>
-      <h1>¿En qué fase de tu recuperación <em>estás?</em></h1>
-      <p class="lead">Después de una cirugía de LCA no se avanza por calendario. Se avanza cuando la rodilla cumple unos objetivos concretos. Responde con sinceridad y te digo en qué punto estás y qué te falta para dar el siguiente paso.</p>
-      <ol class="how">
-        <li><b>01</b><span>Marca <strong>Sí</strong>, <strong>No</strong> o <strong>No sé</strong> en cada objetivo, empezando por la fase 1.</span></li>
-        <li><b>02</b><span>Si un objetivo se repite en otra fase, se marca solo.</span></li>
-        <li><b>03</b><span>Al final verás tu fase actual, lo que te falta y lo que necesitas medir con un profesional.</span></li>
-      </ol>
-      <div class="surgery">
-        <label for="surgery-date">¿Cuándo te operaste?</label>
-        <small>Opcional. Con la fecha calculo solo los criterios de tiempo desde la cirugía.</small>
-        <div class="row">
-          <input type="date" id="surgery-date">
-          <span class="since" id="since"></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="wrap">
-    <div class="phases" id="phases"></div>
-  </div>
-
-  <section class="result" id="resultado" aria-live="polite">
-    <div class="wrap">
-      <span class="eyebrow">Tu resultado</span>
-      <div class="track" id="track"></div>
-      <h2 id="r-title"></h2>
-      <p class="result-body" id="r-body"></p>
-      <div class="lists" id="r-lists"></div>
-    </div>
-  </section>
-
-  <section class="cta" id="contacto">
-    <div class="wrap">
-      <span class="eyebrow">Readaptación online</span>
-      <h2 id="cta-title">Hablemos de tu <em>recuperación.</em></h2>
-      <p id="cta-body"></p>
-      <ul class="cta-points">
-        <li>Primera valoración gratuita</li>
-        <li>Informe personalizado</li>
-        <li>Respuesta en menos de 24 horas</li>
-      </ul>
-      <div class="btns" id="cta-btns">
-        <a class="btn btn-wa" id="btn-wa" href="#" target="_blank" rel="noopener" hidden>Escríbeme por WhatsApp</a>
-        <a class="btn btn-primary" id="btn-ig" href="https://ig.me/m/carloscristobalfisio" target="_blank" rel="noopener">Escríbeme por Instagram</a>
-        <button class="btn btn-ghost" id="btn-copy" type="button">Copiar mi resultado</button>
-      </div>
-      <p class="copy-note" id="copy-note">Copia tu resultado y pégalo en el mensaje. Así sé desde dónde partimos.</p>
-      <textarea class="summary-box" id="summary" readonly hidden aria-label="Resumen de tu resultado"></textarea>
-    </div>
-  </section>
-
-  <footer class="foot">
-    <div class="wrap">
-      <p>Esta checklist es orientativa y no sustituye una valoración. Cada rodilla y cada cirugía son diferentes: si tienes dolor, inflamación o sensación de inestabilidad, consúltalo antes de avanzar de fase.</p>
-      <div class="row">
-        <span>Carlos Cristóbal Fisioterapia · carloscristobalfisioterapia.com</span>
-        <span id="reset-zone"><button class="link-btn" id="btn-reset" type="button">Borrar mis respuestas</button></span>
-      </div>
-    </div>
-  </footer>
-</main>
-
-<div class="dock" id="dock">
-  <div class="wrap">
-    <div class="dock-text" id="dock-text"></div>
-    <a href="#resultado">Ver resultado</a>
-  </div>
-</div>
+<main class="wrap" id="app"></main>
 
 <script>
-// Número de WhatsApp en formato internacional sin "+" ni espacios (ej. 34600000000). Vacío = se oculta el botón.
+// Número de WhatsApp en formato internacional sin "+" ni espacios. Vacío = se oculta el botón.
 const WHATSAPP = "34674613651";
 
-const C = {
-  flex90:   { t: "Flexión de rodilla a 90º", h: "Tumbado boca arriba, doblas la rodilla operada hasta formar un ángulo recto." },
-  flex100:  { t: "Flexión de rodilla a más de 100º", h: "Doblas la rodilla algo más allá del ángulo recto sin dolor." },
-  flex120:  { t: "Flexión de rodilla a más de 120º", h: "El talón se acerca claramente al glúteo, casi como en la pierna sana." },
-  flexext:  { t: "Flexión y extensión completas", h: "La rodilla operada dobla y estira igual que la sana." },
-  ext:      { t: "Extensión completa", h: "Con la pierna estirada, la parte de atrás de la rodilla toca la camilla igual que la sana." },
-  marcha:   { t: "Marcha sin muletas", h: "Caminas sin muletas y sin cojear, en casa y en la calle." },
-  quad:     { t: "Control voluntario del cuádriceps", h: "Al apretar el muslo con la pierna estirada, la rótula sube y el músculo se contrae sin retraso." },
-  vest:     { t: "Sistema vestibular controlado", h: "Mantienes el equilibrio con ojos cerrados o girando la cabeza, sin mareo ni inestabilidad.", pro: 1 },
-  prop50:   { t: "Simetría propioceptiva mayor del 50%", h: "Equilibrio y control de la posición de la rodilla comparados con la pierna sana.", pro: 1 },
-  prop80:   { t: "Simetría propioceptiva mayor del 80%", h: "Equilibrio y control de la posición de la rodilla comparados con la pierna sana.", pro: 1 },
-  prop100:  { t: "Simetría propioceptiva del 100%", h: "Tu pierna operada tiene el mismo equilibrio y control que la sana.", pro: 1 },
-  func50:   { t: "Simetría funcional mayor del 50%", h: "Fuerza y rendimiento de la pierna operada comparados con la sana.", pro: 1 },
-  func100:  { t: "Simetría funcional del 100% o más", h: "La pierna operada rinde igual o mejor que la sana en fuerza y tareas funcionales.", pro: 1 },
-  decel:    { t: "Fase decelerativa unilateral", h: "Controlas frenadas y aterrizajes a una pierna sin que la rodilla se vaya hacia dentro.", pro: 1 },
-  t12w:     { t: "Más de 12 semanas desde la operación", days: { w: 12 } },
-  t5m:      { t: "Más de 5 meses desde la operación", days: { m: 5 } },
-  t9m:      { t: "Más de 9 meses desde la operación", days: { m: 9 } },
-  hop70:    { t: "Más del 70% de simetría en los hop test", h: "Saltos a una pierna (simple, triple, cruzado, 6 m) comparados con la pierna sana.", pro: 1 },
-  hop90:    { t: "Más del 90% de simetría en los hop test", h: "Saltos a una pierna (simple, triple, cruzado, 6 m) comparados con la pierna sana.", pro: 1 },
-  hop95:    { t: "Más del 95% de simetría en los hop test", h: "Saltos a una pierna (simple, triple, cruzado, 6 m) comparados con la pierna sana.", pro: 1 },
-  rsi040:   { t: "RSI index mayor de 0,40", h: "Índice de fuerza reactiva: altura del salto entre tiempo de contacto con el suelo.", pro: 1 },
-  rsi150:   { t: "RSI index mayor de 1,50", h: "Índice de fuerza reactiva: altura del salto entre tiempo de contacto con el suelo.", pro: 1 },
-  agility:  { t: "Agility test apto", h: "Test de cambios de dirección superado con buena técnica, sin dolor ni miedo.", pro: 1 },
-  illinois: { t: "Illinois test apto", h: "Circuito de agilidad Illinois con un tiempo adecuado y buena técnica.", pro: 1 },
-  aclrsi:   { t: "ACL-RSI apto", h: "Cuestionario de confianza psicológica para volver al deporte tras una lesión de LCA.", pro: 1 },
-};
+const Q = [
+  { id: "time", q: "¿Cuánto hace que te operaste?", o: ["Menos de 6 semanas", "Entre 6 y 12 semanas", "Entre 3 y 5 meses", "Entre 5 y 9 meses", "Más de 9 meses"] },
+  { id: "flex", q: "¿Cuánto puedes doblar la rodilla?", h: "Compárala con la otra pierna.", o: ["Menos que una L", "Hasta formar una L (90º)", "Más que una L, pero menos que la otra", "Igual que la otra pierna"] },
+  { id: "ext", q: "¿Puedes estirar la rodilla del todo?", h: "Sentado con la pierna recta: ¿la parte de atrás de la rodilla toca el suelo?", o: ["No", "Casi", "Sí, del todo"] },
+  { id: "walk", q: "¿Cómo caminas?", o: ["Con muletas", "Sin muletas, pero cojeo", "Normal, sin cojear"] },
+  { id: "quad", q: "Con la pierna estirada, aprieta el muslo. ¿Se te sube la rótula?", h: "La rótula es el hueso redondo de delante de la rodilla.", o: ["No", "No lo sé", "Sí"] },
+  { id: "bal", q: "¿Aguantas 30 segundos a la pata coja sobre la pierna operada?", o: ["No", "Me cuesta mucho", "Sí, sin problema"] },
+  { id: "str", q: "¿Tiene la pierna operada la misma fuerza que la otra?", h: "Piensa en sentadillas a una pierna o bajar escaleras.", o: ["Mucha menos", "Algo menos", "La misma", "No lo sé"] },
+  { id: "jump", q: "¿Puedes saltar y caer sobre la pierna operada?", o: ["Todavía no", "Sí, pero con miedo o la rodilla se me va hacia dentro", "Sí, con control"] },
+  { id: "run", q: "¿Puedes correr y hacer cambios de dirección?", o: ["Todavía no corro", "Corro, pero los cambios de dirección no", "Sí, las dos cosas sin dolor ni miedo"] },
+  { id: "conf", q: "¿Cuánta confianza tienes para volver a tu deporte?", o: ["Ninguna", "Poca", "Bastante", "Total"] },
+];
+// Valor "u" = no lo sé
+const VAL = { quad: [0, "u", 2], str: [0, 1, 2, "u"] };
 
 const PHASES = [
-  { title: "Fase 1", goal: "Movilidad básica y control del cuádriceps.", items: ["flex90", "ext", "marcha", "prop50", "vest", "func50", "quad"] },
-  { title: "Fase 2", goal: "Más rango, más fuerza y primeras frenadas a una pierna.", items: ["flex100", "ext", "marcha", "prop80", "vest", "func100", "quad", "decel"] },
-  { title: "Fase 3", goal: "Preparar la rodilla para el impacto y los saltos.", items: ["flex120", "ext", "prop80", "vest", "func100", "decel", "t12w", "hop70"] },
-  { title: "Fase 4", goal: "Carrera, saltos reactivos y cambios de dirección.", items: ["flexext", "prop100", "func100", "rsi040", "t5m", "hop90", "agility", "illinois"] },
-  { title: "Fase 5", goal: "Vuelta al deporte con garantías.", items: ["flexext", "prop100", "func100", "rsi150", "t9m", "hop95", "agility", "illinois", "aclrsi"] },
+  { name: "Despertar la rodilla", test: { flex: v => v >= 1, ext: v => v === 2, walk: v => v >= 1, quad: v => v === 2, bal: v => v >= 1 } },
+  { name: "Caminar bien y ganar fuerza", test: { flex: v => v >= 2, walk: v => v === 2, bal: v => v === 2, str: v => v >= 1 } },
+  { name: "Preparar los saltos", test: { str: v => v === 2, jump: v => v >= 1, time: v => v >= 2 } },
+  { name: "Correr y cambiar de dirección", test: { flex: v => v === 3, jump: v => v === 2, run: v => v >= 1, time: v => v >= 3 } },
+  { name: "Volver a tu deporte", test: { run: v => v === 2, time: v => v >= 4, conf: v => v >= 2 } },
 ];
 
-const LABELS = { y: "Sí", n: "No", u: "No sé" };
-const KEY = "cc-checklist-lca-v1";
-let state = { a: {}, date: "" };
-try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && s.a) state = s; } catch (e) {}
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+const FIX = {
+  flex: ["Tu rodilla todavía no dobla lo suficiente", "Movilidad cada día con ejercicios guiados, ganando grados sin forzar ni inflamar."],
+  ext:  ["La rodilla no se estira del todo", "Es lo primero que hay que recuperar. Si no, cambia tu forma de caminar y luego cuesta mucho más."],
+  walk: ["Todavía no caminas normal", "Reeducar la forma de andar y fortalecer para quitar la cojera."],
+  quad: ["Tu cuádriceps no se activa bien", "Es la base de todo lo demás. Ejercicios de activación hasta que el músculo responda."],
+  quadU:["No sabes si tu cuádriceps se activa bien", "Hay que comprobarlo: si falla, todo lo que construyas encima va cojo."],
+  bal:  ["Te falta equilibrio en la pierna operada", "Ejercicios de equilibrio que van de fácil a difícil: suelo estable, inestable, ojos cerrados…"],
+  str:  ["La pierna operada tiene menos fuerza", "Progresión de cargas: saber cuánto peso, cuántas series y cuándo subir cada semana."],
+  strU: ["No sabes cuánta fuerza has perdido", "Hay que medirla y compararla con la otra pierna. Sin ese dato, entrenas a ciegas."],
+  jump: ["Todavía no controlas los saltos", "Aprender a frenar y caer bien antes de saltar más. Aquí es donde más gente se vuelve a lesionar."],
+  run:  ["Aún no corres ni cambias de dirección", "Plan de carrera progresivo y, cuando la fuerza esté lista, cambios de dirección."],
+  time: ["Tu rodilla necesita más tiempo", "El ligamento nuevo todavía se está haciendo fuerte. Mientras, se prepara la fuerza para cuando toque."],
+  conf: ["Te falta confianza para volver", "Es muy normal. Se gana practicando gestos de tu deporte poco a poco y con seguridad."],
+};
+const GOT = {
+  flex: "Doblas bien la rodilla", ext: "Estiras del todo", walk: "Caminas sin cojear", quad: "Cuádriceps activo",
+  bal: "Buen equilibrio", str: "Fuerza igualada", jump: "Saltos con control", run: "Corres y cambias de dirección", conf: "Confianza para volver",
+};
 
-function surgeryDate() {
-  if (!state.date) return null;
-  const d = new Date(state.date + "T00:00:00");
-  return isNaN(d) || d > new Date() ? null : d;
-}
-function answer(id) {
-  const c = C[id], d = surgeryDate();
-  if (c.days && d) {
-    const lim = new Date(d);
-    if (c.days.w) lim.setDate(lim.getDate() + c.days.w * 7);
-    if (c.days.m) lim.setMonth(lim.getMonth() + c.days.m);
-    return new Date() > lim ? "y" : "n";
-  }
-  return state.a[id] || null;
-}
-function sinceText() {
-  const d = surgeryDate();
-  if (!d) return state.date ? "Revisa la fecha: no puede ser futura." : "";
-  const days = Math.floor((new Date() - d) / 864e5);
-  const w = Math.floor(days / 7);
-  let m = (new Date().getFullYear() - d.getFullYear()) * 12 + new Date().getMonth() - d.getMonth();
-  if (new Date().getDate() < d.getDate()) m--;
-  return w < 12 ? `Llevas ${w} ${w === 1 ? "semana" : "semanas"} desde la operación.` : `Llevas ${w} semanas (${Math.max(m, 0)} meses) desde la operación.`;
-}
+let step = -1;          // -1 = inicio, 0..9 = pregunta, 10 = resultado
+let ans = {};
+const app = document.getElementById("app");
+const val = (id, i) => VAL[id] ? VAL[id][i] : i;
 
-// Render de fases
-const phasesEl = document.getElementById("phases");
-PHASES.forEach((p, pi) => {
-  const sec = document.createElement("section");
-  sec.className = "phase"; sec.id = "fase" + (pi + 1);
-  sec.innerHTML = `
-    <div class="phase-head">
-      <span class="phase-num">0${pi + 1}</span>
-      <div><h2>${p.title}</h2><p>${p.goal}</p></div>
-      <span class="chip" id="chip-${pi}"></span>
+function render() {
+  if (step < 0) return renderStart();
+  if (step >= Q.length) return renderResult();
+  const q = Q[step];
+  app.innerHTML = `<section class="screen fade">
+    <div class="bar">
+      <div class="bar-top">
+        <button class="back" type="button" id="back">← Atrás</button>
+        <span>${step + 1} de ${Q.length}</span>
+      </div>
+      <div class="track"><i style="width:${(step + 1) / Q.length * 100}%"></i></div>
     </div>
-    <ul class="items">${p.items.map(id => {
-      const c = C[id];
-      return `<li class="item">
-        <div class="item-text">
-          <span class="item-title">${c.t}${c.pro ? '<span class="tag">Se mide</span>' : ""}</span>
-          ${c.h ? `<span class="item-help">${c.h}</span>` : ""}
-          ${c.days ? `<span class="item-auto" data-auto="${id}"></span>` : ""}
-        </div>
-        <div class="seg" role="group" aria-label="${c.t}">
-          ${["y", "n", "u"].map(v => `<button type="button" id="b-${pi}-${id}-${v}" data-id="${id}" data-v="${v}" aria-pressed="false">${LABELS[v]}</button>`).join("")}
-        </div>
-      </li>`;
-    }).join("")}</ul>`;
-  phasesEl.appendChild(sec);
-});
+    <h1 class="q">${q.q}</h1>
+    ${q.h ? `<p class="hint">${q.h}</p>` : ""}
+    <div class="opts">${q.o.map((t, i) => `<button class="opt" type="button" id="opt-${q.id}-${i}" data-i="${i}" aria-pressed="${ans[q.id] === val(q.id, i)}">${t}</button>`).join("")}</div>
+  </section>`;
+  document.getElementById("back").onclick = () => { step--; render(); };
+  app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+    ans[q.id] = val(q.id, +b.dataset.i);
+    b.setAttribute("aria-pressed", "true");
+    setTimeout(() => { step++; render(); window.scrollTo(0, 0); }, 180);
+  });
+}
 
-phasesEl.addEventListener("click", e => {
-  const b = e.target.closest("button[data-id]");
-  if (!b || b.disabled) return;
-  const { id, v } = b.dataset;
-  state.a[id] = state.a[id] === v ? undefined : v;
-  if (!state.a[id]) delete state.a[id];
-  save(); update();
-});
-
-const dateIn = document.getElementById("surgery-date");
-dateIn.max = new Date().toISOString().slice(0, 10);
-dateIn.value = state.date || "";
-dateIn.addEventListener("change", () => { state.date = dateIn.value; save(); update(); });
+function renderStart() {
+  app.innerHTML = `<section class="screen fade">
+    <span class="badge">Operados de ligamento cruzado</span>
+    <h1 class="big">¿En qué fase de tu recuperación <em>estás?</em></h1>
+    <p class="sub">Responde 10 preguntas rápidas y te digo en qué fase estás, qué te está frenando y qué hay que hacer para avanzar.</p>
+    <div class="facts"><span><b>10</b> preguntas</span><span><b>1</b> minuto</span><span>Resultado al momento</span></div>
+    <button class="btn btn-ink full" type="button" id="start">Empezar</button>
+  </section>`;
+  document.getElementById("start").onclick = () => { step = 0; render(); };
+}
 
 function evaluate() {
-  const res = PHASES.map(p => {
-    const ans = p.items.map(answer);
-    return {
-      yes: ans.filter(a => a === "y").length,
-      total: p.items.length,
-      no: p.items.filter((id, i) => ans[i] === "n"),
-      unk: p.items.filter((id, i) => ans[i] === "u"),
-      empty: p.items.filter((id, i) => !ans[i]),
-    };
-  });
-  let current = res.findIndex(r => r.yes < r.total);
-  return { res, current }; // current === -1 → todas completadas
+  for (let p = 0; p < PHASES.length; p++) {
+    const fails = Object.entries(PHASES[p].test).filter(([id, ok]) => ans[id] === "u" || !ok(ans[id])).map(([id]) => id);
+    if (fails.length) return { phase: p, fails };
+  }
+  return { phase: 5, fails: [] };
 }
 
-const list = (cls, title, ids) => ids.length ? `<div class="list ${cls}"><h3>${title}</h3><ul>${ids.map(id => `<li>${C[id].t}</li>`).join("")}</ul></div>` : "";
-const answeredAny = () => Object.keys(state.a).length > 0 || !!surgeryDate();
+function renderResult() {
+  const { phase, fails } = evaluate();
+  const done = phase === 5;
+  const got = Object.keys(GOT).filter(id => ans[id] !== "u" && ans[id] >= 2);
+  const probs = fails.map(id => FIX[ans[id] === "u" ? id + "U" : id] || FIX[id]);
+  const msg = buildMessage(phase, probs);
 
-function update() {
-  // Botones
-  document.querySelectorAll("button[data-id]").forEach(b => {
-    const id = b.dataset.id, a = answer(id), auto = C[id].days && surgeryDate();
-    b.setAttribute("aria-pressed", String(a === b.dataset.v));
-    b.disabled = !!auto;
-  });
-  document.querySelectorAll("[data-auto]").forEach(el => {
-    el.textContent = surgeryDate() ? "Calculado con tu fecha de operación." : "Si añades tu fecha de operación arriba, se calcula solo.";
-  });
-  document.getElementById("since").textContent = sinceText();
-
-  const { res, current } = evaluate();
-  const cur = current === -1 ? 5 : current;
-
-  // Chips y estado de cada fase
-  res.forEach((r, i) => {
-    const chip = document.getElementById("chip-" + i);
-    const s = i < cur ? "done" : i === cur ? "current" : "later";
-    chip.dataset.s = s;
-    chip.textContent = s === "done" ? "Completada" : `${r.yes}/${r.total}`;
-    document.getElementById("fase" + (i + 1)).dataset.s = s;
-  });
-
-  // Barra de progreso
-  document.getElementById("track").innerHTML = res.map((r, i) => {
-    const s = i < cur ? "done" : i === cur ? "current" : "later";
-    return `<div data-s="${s}" style="--p:${Math.round(r.yes / r.total * 100)}%"><i></i>Fase ${i + 1}</div>`;
-  }).join("");
-
-  const title = document.getElementById("r-title"), body = document.getElementById("r-body"), lists = document.getElementById("r-lists");
-  const ctaTitle = document.getElementById("cta-title"), ctaBody = document.getElementById("cta-body");
-  let dock;
-
-  if (!answeredAny()) {
-    title.innerHTML = "Empieza por la <em>fase 1.</em>";
-    body.textContent = "Responde los objetivos de arriba y aquí verás en qué fase estás y qué te falta para avanzar.";
-    lists.innerHTML = "";
-    ctaTitle.innerHTML = "Hablemos de tu <em>recuperación.</em>";
-    ctaBody.textContent = "Si prefieres que lo veamos juntos desde el principio, escríbeme. En la valoración reviso tu rodilla y te digo exactamente en qué fase estás.";
-    dock = `<b>Sin respuestas todavía</b> <span>· Empieza por la fase 1</span>`;
-  } else if (current === -1) {
-    title.innerHTML = "Cumples los criterios para <em>volver.</em>";
-    body.textContent = "Has marcado todos los objetivos de las cinco fases. Es un gran trabajo. Antes de volver a competir, conviene confirmar estos datos con mediciones objetivas: la vuelta al deporte es el momento con más riesgo de recaída.";
-    lists.innerHTML = "";
-    ctaTitle.innerHTML = "Valida tu vuelta al <em>deporte.</em>";
-    ctaBody.textContent = "Revisamos juntos tus test de salto, fuerza y confianza para que vuelvas con datos, no con sensaciones.";
-    dock = `<b>Fase 5 completada</b> <span>· Valida tu vuelta</span>`;
-  } else {
-    const r = res[current];
-    const next = current + 1;
-    const pending = r.no.length + r.unk.length + r.empty.length;
-    title.innerHTML = `Estás en la <em>fase ${next}.</em>`;
-    if (r.empty.length && !r.no.length && !r.unk.length) {
-      body.textContent = `Llevas ${r.yes} de ${r.total} objetivos de la fase ${next}. Te quedan ${r.empty.length} por responder para saber si puedes pasar ${next < 5 ? "a la fase " + (next + 1) : "a la vuelta al deporte"}.`;
-    } else if (!r.no.length && r.unk.length) {
-      body.textContent = `Puede que estés más cerca de lo que crees: no has marcado ningún "No", pero hay ${r.unk.length} ${r.unk.length === 1 ? "objetivo que no sabes" : "objetivos que no sabes"} comprobar. Sin medirlos no es seguro avanzar ${next < 5 ? "a la fase " + (next + 1) : "a la vuelta al deporte"}.`;
-    } else {
-      body.textContent = `Has cumplido ${r.yes} de ${r.total} objetivos. Te ${pending === 1 ? "falta 1" : "faltan " + pending} para pasar ${next < 5 ? "a la fase " + (next + 1) : "a la vuelta al deporte"}. Avanzar antes de tiempo es una de las causas más habituales de recaída, así que vale la pena hacerlo bien.`;
-    }
-    lists.innerHTML =
-      list("no", "Lo que te falta", r.no) +
-      list("unk", "Lo que hay que medir", r.unk) +
-      list("empty", "Sin responder", r.empty);
-    const proPending = [...r.no, ...r.unk].filter(id => C[id].pro).length;
-    ctaTitle.innerHTML = r.unk.length || proPending ? "Aquí es donde te puedo <em>ayudar.</em>" : "Hablemos de tu <em>recuperación.</em>";
-    ctaBody.textContent = r.unk.length || proPending
-      ? "Muchos de estos objetivos no se pueden comprobar a ojo: hay que medirlos y compararlos con tu pierna sana. En una valoración online te digo exactamente dónde estás y te preparo un plan para cerrar lo que te falta, semana a semana."
-      : "Con un plan adaptado a tu fase cierras estos objetivos antes y con menos riesgo. Te acompaño en cada etapa con seguimiento semanal y vídeos propios.";
-    dock = `<b>Fase ${next}</b> <span>· ${r.yes}/${r.total} objetivos</span>`;
-  }
-  document.getElementById("dock-text").innerHTML = dock;
-  document.getElementById("summary").value = summaryText(res, current);
-  const wa = document.getElementById("btn-wa");
-  if (WHATSAPP) {
-    wa.hidden = false;
-    wa.href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(summaryText(res, current))}`;
-  }
+  app.innerHTML = `<section class="screen fade">
+    <div class="phase-dots">${PHASES.map((p, i) => `<div class="${i < phase ? "done" : i === phase ? "now" : ""}"><i></i>Fase ${i + 1}</div>`).join("")}</div>
+    ${done
+      ? `<h1 class="big">Estás listo para la <em>prueba final.</em></h1>
+         <p class="sub">Por lo que cuentas, has superado las 5 fases. Antes de volver a jugar hay que confirmarlo con tests de salto, fuerza y agilidad. Volver sin medirlo es el error más típico.</p>`
+      : `<h1 class="big">Estás en la <em>fase ${phase + 1}.</em></h1>
+         <p class="phase-name">${PHASES[phase].name}</p>`}
+    ${got.length ? `<div class="got">${got.map(id => `<span>${GOT[id]}</span>`).join("")}</div>` : ""}
+    ${probs.length ? `<h3 class="label">Lo que te frena para pasar a la fase ${phase + 2 > 5 ? "final" : phase + 2}</h3>
+      <div class="probs">${probs.map(([t, s]) => `<div class="prob"><b>${t}</b><p>${s}</p></div>`).join("")}</div>` : ""}
+    <div class="cta">
+      <h2>Saber qué hacer es fácil. Lo difícil es saber <em>cómo.</em></h2>
+      <p>Cuánto peso, cuántas series, cuándo subir y cuándo parar. Eso es lo que marca la diferencia entre avanzar o volver a lesionarte. Te preparo un plan para tu fase y te acompaño semana a semana.</p>
+      <div class="btns">
+        ${WHATSAPP ? `<a class="btn btn-wa" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Escríbeme por WhatsApp</a>` : ""}
+        <a class="btn btn-ghost" href="https://ig.me/m/carloscristobalfisio" target="_blank" rel="noopener">Escríbeme por Instagram</a>
+      </div>
+      <small><b>Primera valoración gratis</b> · Respuesta en menos de 24 h</small>
+    </div>
+    <button class="again" type="button" id="again">Repetir el test</button>
+    <p class="legal">Este test es orientativo y no sustituye una valoración. Si tienes dolor, la rodilla se hincha o notas que falla, consúltalo antes de avanzar.</p>
+  </section>`;
+  document.getElementById("again").onclick = () => { ans = {}; step = -1; render(); window.scrollTo(0, 0); };
 }
 
-function summaryText(res, current) {
-  const lines = ["Hola Carlos, he hecho la checklist de progresión LCA."];
-  if (surgeryDate()) lines.push(sinceText());
-  if (current === -1) lines.push("He marcado todos los objetivos de las 5 fases y quiero validar mi vuelta al deporte.");
-  else {
-    const r = res[current];
-    lines.push(`Estoy en la fase ${current + 1} (${r.yes}/${r.total} objetivos).`);
-    if (r.no.length) lines.push("Me falta: " + r.no.map(id => C[id].t.toLowerCase()).join("; ") + ".");
-    if (r.unk.length) lines.push("No sé medir: " + r.unk.map(id => C[id].t.toLowerCase()).join("; ") + ".");
-  }
+function buildMessage(phase, probs) {
+  const lines = ["Hola Carlos, he hecho el test de recuperación de LCA."];
+  lines.push(phase === 5 ? "Me sale que he superado las 5 fases y quiero confirmarlo antes de volver." : `Me sale que estoy en la fase ${phase + 1}.`);
+  lines.push("Operado hace: " + Q[0].o[ans.time].toLowerCase() + ".");
+  if (probs.length) lines.push("Lo que me frena: " + probs.map(p => p[0].toLowerCase()).join("; ") + ".");
   lines.push("¿Me ayudas?");
   return lines.join("\n");
 }
 
-// Copiar resultado
-document.getElementById("btn-copy").addEventListener("click", () => {
-  const box = document.getElementById("summary"), note = document.getElementById("copy-note");
-  const fallback = () => { box.hidden = false; box.focus(); box.select(); note.textContent = "Selecciona el texto y cópialo manualmente."; };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(box.value).then(() => { note.textContent = "Copiado. Pégalo en el mensaje que me envíes."; }, fallback);
-  } else fallback();
-});
-
-// Borrar respuestas con confirmación en página
-const zone = document.getElementById("reset-zone");
-zone.addEventListener("click", e => {
-  if (e.target.id === "btn-reset") {
-    zone.innerHTML = `<span class="confirm">¿Seguro? <button class="link-btn" id="reset-yes" type="button">Sí, borrar</button><button class="link-btn" id="reset-no" type="button">Cancelar</button></span>`;
-  } else if (e.target.id === "reset-yes" || e.target.id === "reset-no") {
-    if (e.target.id === "reset-yes") { state = { a: {}, date: "" }; dateIn.value = ""; save(); update(); }
-    zone.innerHTML = `<button class="link-btn" id="btn-reset" type="button">Borrar mis respuestas</button>`;
-  }
-});
-
-// Ocultar barra inferior cuando el resultado está a la vista
-const dockEl = document.getElementById("dock");
-if ("IntersectionObserver" in window) {
-  new IntersectionObserver(es => es.forEach(en => dockEl.classList.toggle("away", en.isIntersecting)), { threshold: 0.05 })
-    .observe(document.getElementById("resultado"));
-}
-
-update();
+render();
 </script>
