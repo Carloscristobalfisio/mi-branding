@@ -197,6 +197,19 @@
   }
   .timeline-legend { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
 
+  .ms-list { display: grid; }
+  .ms { display: grid; grid-template-columns: 22px 1fr auto; gap: 4px 12px; padding: 14px 0; border-top: 1px solid var(--line); align-items: start; }
+  .ms:first-child { border-top: 0; padding-top: 0; }
+  .ms-dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--muted); margin-top: 4px; }
+  .ms.done .ms-dot { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .ms.now .ms-dot { border-color: var(--accent-dark); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 60%, transparent); }
+  .ms.goal .ms-dot { border-radius: 4px; border-color: var(--text); background: var(--text); }
+  .ms-title { font-weight: 500; }
+  .ms.done .ms-title { color: var(--muted); }
+  .ms-crit { grid-column: 2 / 4; font-size: 13.5px; color: var(--muted); }
+  .ms-when { text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ms-when b { display: block; font-weight: 500; font-size: 15px; }
+  .ms-when span { color: var(--muted); }
   .bars { display: grid; gap: 14px; }
   .bar-row .bar-top { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
   .bar-row .bar-top b { font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -246,7 +259,7 @@
   <section class="hero">
     <span class="badge">Calculadora de rodilla</span>
     <h1>¿Cuánto falta para volver a <em>moverte?</em></h1>
-    <p class="lead">Responde 7 preguntas sobre tu rodilla y te doy una estimación realista de tu recuperación, fase a fase. Sin compromiso, en menos de 2 minutos.</p>
+    <p class="lead">Responde 8 preguntas sobre tu rodilla y te doy una estimación realista de tu recuperación, fase a fase. Sin compromiso, en menos de 2 minutos.</p>
     <div class="hero-meta">
       <div><b>Especialista</b> en tren inferior y LCA</div>
       <div><b>Máster</b> Real Madrid · Univ. Europea</div>
@@ -257,7 +270,7 @@
   <section id="quiz" class="card" aria-live="polite">
     <div class="progress">
       <div class="progress-bar"><i id="progressFill"></i></div>
-      <div class="progress-label" id="progressLabel">01 / 07</div>
+      <div class="progress-label" id="progressLabel">01 / 08</div>
     </div>
 
     <!-- 01 Lesión -->
@@ -268,9 +281,17 @@
       <div class="options two" data-name="injury" data-type="single"></div>
     </div>
 
-    <!-- 02 Tiempo -->
+    <!-- 02 Detalle -->
     <div class="step" data-step="1">
       <div class="step-num">02</div>
+      <h2 id="subTitle">Concretemos un poco más</h2>
+      <p class="hint" id="subHint">Cuanto más preciso, más ajustado será el cálculo.</p>
+      <div class="options" id="subOptions"></div>
+    </div>
+
+    <!-- 03 Tiempo -->
+    <div class="step" data-step="1">
+      <div class="step-num">03</div>
       <h2 id="timeTitle">¿Cuánto tiempo ha pasado desde la lesión?</h2>
       <p class="hint" id="timeHint">Aproximado, en semanas.</p>
       <div class="field">
@@ -284,7 +305,7 @@
 
     <!-- 03 Dolor -->
     <div class="step" data-step="2">
-      <div class="step-num">03</div>
+      <div class="step-num">04</div>
       <h2>¿Cuánto te duele hoy?</h2>
       <p class="hint">Piensa en un día normal, no en el peor ni en el mejor.</p>
       <div class="field">
@@ -298,7 +319,7 @@
 
     <!-- 04 Síntomas -->
     <div class="step" data-step="3">
-      <div class="step-num">04</div>
+      <div class="step-num">05</div>
       <h2>¿Notas algo de esto?</h2>
       <p class="hint">Marca todo lo que te pase. Si no notas nada, sigue sin marcar.</p>
       <div class="options two" data-name="symptoms" data-type="multi"></div>
@@ -306,7 +327,7 @@
 
     <!-- 05 Objetivo -->
     <div class="step" data-step="4">
-      <div class="step-num">05</div>
+      <div class="step-num">06</div>
       <h2>¿A qué quieres volver?</h2>
       <p class="hint">Tu objetivo cambia los plazos. Cada paciente es diferente.</p>
       <div class="options" data-name="goal" data-type="single"></div>
@@ -314,7 +335,7 @@
 
     <!-- 06 Perfil -->
     <div class="step" data-step="5">
-      <div class="step-num">06</div>
+      <div class="step-num">07</div>
       <h2>Cuéntame un poco de ti</h2>
       <p class="hint">Edad y días que puedes dedicar a tu recuperación.</p>
       <div class="field">
@@ -332,10 +353,18 @@
 
     <!-- 07 Historial -->
     <div class="step" data-step="6">
-      <div class="step-num">07</div>
+      <div class="step-num">08</div>
       <h2>¿Cómo ha sido tu recuperación hasta ahora?</h2>
       <p class="hint">Así sé desde dónde partimos.</p>
       <div class="options" data-name="history" data-type="single"></div>
+      <div class="field" id="trainedField" style="margin-top:22px" hidden>
+        <label for="trained" id="trainedLabel">¿Cuántas semanas has trabajado tu rodilla de forma constante?</label>
+        <div class="range-row">
+          <input type="range" id="trained" min="0" max="104" step="1" value="4">
+          <div class="range-val" id="trainedVal">4 sem</div>
+        </div>
+        <div class="range-scale"><span>Nada</span><span id="trainedMax">Todo el tiempo</span></div>
+      </div>
       <div class="field" style="margin-top:18px">
         <div class="options" data-name="previous" data-type="multi"></div>
       </div>
@@ -356,7 +385,7 @@
       <p id="resSub"></p>
       <div class="kpis">
         <div class="kpi"><span>Fase actual</span><b id="kpiPhase"></b></div>
-        <div class="kpi"><span>Progreso</span><b id="kpiProgress"></b></div>
+        <div class="kpi"><span>Progreso real</span><b id="kpiProgress"></b></div>
         <div class="kpi"><span>Fecha objetivo</span><b id="kpiDate"></b></div>
       </div>
     </div>
@@ -364,11 +393,23 @@
     <div id="alertBox"></div>
 
     <div class="card result-block">
+      <p class="section-title">Tiempo vs. progreso real</p>
+      <div class="bars" id="realBars"></div>
+      <p class="small" id="realNote" style="margin:14px 0 0"></p>
+    </div>
+
+    <div class="card result-block">
       <p class="section-title">Tu hoja de ruta</p>
       <div class="timeline" id="timeline"></div>
       <div class="timeline-marker"><b id="marker"></b></div>
       <div class="timeline-legend"><span>Semana 0</span><span id="legendEnd"></span></div>
       <div class="phases" id="phases" style="margin-top:22px"></div>
+    </div>
+
+    <div class="card result-block">
+      <p class="section-title">Tus hitos, semana a semana</p>
+      <p class="small" style="margin:-8px 0 14px">Semanas que te faltan desde hoy, con un trabajo constante. Cada hito se desbloquea por criterio, no por calendario.</p>
+      <div class="ms-list" id="milestones"></div>
     </div>
 
     <div class="card result-block">
@@ -428,70 +469,266 @@
 const WHATSAPP_NUMBER = "34600000000";
 
 /*
-  Plazos base en semanas [mín, máx] hasta el objetivo, por lesión.
-  daily = vida diaria sin dolor · rec = deporte recreativo · comp = deporte con pivote/competición
-  phases = reparto del plazo total entre las 4 fases (suma 1).
+  Cada lesión tiene:
+  - subtypes: tipo o gravedad. f multiplica todos los plazos (biología del tejido).
+  - ms: hitos [título, semana mín, semana máx, fase 1–4, criterio para conseguirlo, objetivo]
+        Semanas contadas desde la cirugía (si es quirúrgica) o desde la lesión, para un
+        perfil de referencia (adulto joven, 3–4 días/semana, con seguimiento).
+        objetivo = "daily" | "rec" | "comp" marca el hito que cierra cada objetivo.
+  - floor: semana mínima absoluta para un objetivo (no se acorta aunque el perfil sea bueno).
+  - overuse: lesión por sobrecarga. El reloj empieza con el tratamiento, no con los síntomas.
 */
 const INJURIES = {
   lca_op: {
     label: "Rotura de LCA operada", sub: "Ligamentoplastia (plastia de isquios, tendón rotuliano…)",
-    surgical: true, daily: [14, 20], rec: [32, 40], comp: [40, 52],
-    phases: [0.12, 0.28, 0.32, 0.28],
+    surgical: true, floor: { comp: 39 },
+    subQ: "¿Cómo fue tu cirugía?",
+    subtypes: [
+      { id: "isquios", label: "Plastia de isquiotibiales", sub: "Injerto de los tendones de la parte de atrás del muslo", f: 1.0 },
+      { id: "htH", label: "Plastia de tendón rotuliano (HTH)", sub: "Injerto del tendón bajo la rótula", f: 1.0, note: "Con plastia HTH es habitual notar molestias al arrodillarte los primeros meses; las trabajamos desde el principio." },
+      { id: "menisco", label: "LCA + sutura de menisco", sub: "Te repararon también el menisco", f: 1.12, note: "La sutura de menisco obliga a proteger la flexión y la carga las primeras 4–6 semanas, por eso todo se retrasa un poco." },
+      { id: "lli", label: "LCA + lesión de ligamento lateral", sub: "Lesión combinada", f: 1.08 },
+      { id: "revision", label: "Es mi segunda cirugía de LCA", sub: "Cirugía de revisión", f: 1.2, note: "En una cirugía de revisión la integración del injerto es más lenta y conviene ser más conservador con la vuelta al pivote." },
+      { id: "nose", label: "No sé qué técnica me hicieron", sub: "", f: 1.0 },
+    ],
+    ms: [
+      ["Extensión completa de rodilla", 1, 3, 1, "Rodilla totalmente estirada como la otra y cuádriceps que se contrae bien."],
+      ["Caminar sin muletas", 2, 4, 1, "Sin cojera, sin derrame y con la extensión completa."],
+      ["Flexión de 120° y escaleras normales", 6, 10, 2, "Subes y bajas escaleras alternando piernas sin dolor."],
+      ["Vida diaria sin limitaciones", 10, 14, 2, "Caminar, trabajar y agacharte sin dolor ni hinchazón.", "daily"],
+      ["Empezar a correr", 12, 16, 3, "Fuerza de cuádriceps ≥ 70 % de la otra pierna, 0 derrame y sentadilla a una pierna controlada."],
+      ["Saltos y pliometría", 16, 20, 3, "Carrera continua de 20–30 min sin molestias y fuerza ≥ 80 %."],
+      ["Deporte recreativo sin contacto", 22, 30, 3, "Gimnasio, bici, carrera y pádel suave. Test de salto ≥ 85 % de la otra pierna.", "rec"],
+      ["Cambios de dirección y agilidad", 20, 26, 3, "Aterrizajes con buena alineación de rodilla y fuerza ≥ 85 %."],
+      ["Entrenar con el equipo", 32, 38, 4, "Fuerza y saltos ≥ 90 % de simetría, sin miedo a la lesión."],
+      ["Competición", 40, 48, 4, "Mínimo 9 meses desde la cirugía y todos los test superados.", "comp"],
+    ],
   },
   lca_cons: {
     label: "Rotura de LCA sin operar", sub: "Tratamiento conservador o pendiente de decidir",
-    surgical: false, daily: [10, 14], rec: [20, 28], comp: [28, 40],
-    phases: [0.12, 0.33, 0.30, 0.25],
+    surgical: false,
+    subQ: "¿Cómo se comporta tu rodilla?",
+    subtypes: [
+      { id: "estable", label: "No me ha vuelto a fallar", sub: "Me siento estable en el día a día", f: 1.0 },
+      { id: "fallos", label: "Me falla de vez en cuando", sub: "Al girar, al bajar escaleras o en el deporte", f: 1.25, note: "Si tras 3 meses de trabajo de fuerza y control la rodilla sigue fallando, lo valoraremos junto al traumatólogo: puede que la cirugía sea tu mejor opción." },
+      { id: "menisco", label: "Además tengo lesión de menisco", sub: "Me lo vieron en la resonancia", f: 1.15 },
+    ],
+    ms: [
+      ["Caminar sin muletas ni cojera", 1, 3, 1, "Sin derrame y con extensión completa."],
+      ["Extensión completa y sin hinchazón", 2, 4, 1, "Rodilla estirada como la otra y sin derrame al final del día."],
+      ["Vida diaria sin limitaciones", 8, 12, 2, "Escaleras, agacharte y caminar sin fallos ni dolor.", "daily"],
+      ["Empezar a correr", 8, 12, 3, "Fuerza de cuádriceps ≥ 70 % y ningún episodio de fallo."],
+      ["Saltos y pliometría", 12, 16, 3, "Carrera continua sin molestias y buen control en aterrizajes."],
+      ["Deporte recreativo sin pivote", 16, 24, 3, "Correr, gimnasio o bici con fuerza ≥ 85 % y sin fallos.", "rec"],
+      ["Cambios de dirección y agilidad", 18, 24, 4, "Test de salto ≥ 90 % y ningún fallo en los últimos 2 meses."],
+      ["Deporte con pivote o contacto", 26, 40, 4, "Solo si superas los test y no hay fallos. Sin LCA el riesgo de nuevas lesiones de menisco es mayor.", "comp"],
+    ],
   },
   menisco_resec: {
     label: "Menisco: meniscectomía", sub: "Te han retirado parte del menisco",
-    surgical: true, daily: [3, 5], rec: [6, 9], comp: [8, 12],
-    phases: [0.15, 0.35, 0.30, 0.20],
+    surgical: true,
+    subQ: "¿Qué menisco te operaron?",
+    subtypes: [
+      { id: "interno", label: "Menisco interno", sub: "Por la parte de dentro de la rodilla", f: 1.0 },
+      { id: "externo", label: "Menisco externo", sub: "Por la parte de fuera", f: 1.35, note: "La meniscectomía externa carga más el cartílago y suele necesitar más tiempo hasta el deporte." },
+      { id: "cartilago", label: "Además tengo daño de cartílago", sub: "Condropatía asociada", f: 1.25 },
+      { id: "nose", label: "No lo sé", sub: "", f: 1.1 },
+    ],
+    ms: [
+      ["Caminar sin muletas", 0.5, 1, 1, "Normalmente en pocos días, sin cojera."],
+      ["Movilidad completa", 2, 3, 1, "Flexión y extensión como la otra rodilla, sin derrame."],
+      ["Vida diaria sin limitaciones", 3, 4, 2, "Escaleras y agacharte sin dolor ni hinchazón.", "daily"],
+      ["Empezar a correr", 4, 6, 3, "Sentadilla a una pierna sin dolor y fuerza ≥ 75 %."],
+      ["Deporte recreativo", 6, 8, 3, "Carrera de 30 min sin derrame al día siguiente.", "rec"],
+      ["Saltos y cambios de dirección", 6, 8, 4, "Fuerza ≥ 85 % y saltos sin dolor."],
+      ["Competición", 7, 10, 4, "Test de fuerza y salto ≥ 90 % y sin derrame tras entrenar.", "comp"],
+    ],
   },
   menisco_sutura: {
     label: "Menisco: sutura", sub: "Te han reparado (cosido) el menisco",
-    surgical: true, daily: [8, 12], rec: [16, 20], comp: [20, 26],
-    phases: [0.22, 0.30, 0.28, 0.20],
+    surgical: true,
+    subQ: "¿Qué tipo de rotura te suturaron?",
+    subtypes: [
+      { id: "longitudinal", label: "Rotura longitudinal o periférica", sub: "La más habitual", f: 1.0 },
+      { id: "radial", label: "Rotura radial o compleja", sub: "", f: 1.15 },
+      { id: "raiz", label: "Rotura de la raíz del menisco", sub: "Reinserción de raíz", f: 1.3, note: "La reparación de raíz necesita más tiempo sin carga completa para que cicatrice." },
+      { id: "nose", label: "No lo sé", sub: "", f: 1.05 },
+    ],
+    ms: [
+      ["Caminar sin muletas", 4, 6, 1, "Carga progresiva. Flexión limitada a 90° las primeras 4–6 semanas."],
+      ["Flexión completa", 10, 12, 2, "Sin dolor en la interlínea al doblar la rodilla del todo."],
+      ["Vida diaria sin limitaciones", 10, 14, 2, "Escaleras y agacharte sin dolor ni bloqueos.", "daily"],
+      ["Empezar a correr", 14, 16, 3, "Fuerza ≥ 70 % y sentadilla profunda sin dolor."],
+      ["Saltos y pliometría", 16, 20, 3, "Carrera continua sin derrame."],
+      ["Deporte recreativo", 20, 24, 3, "Fuerza ≥ 85 % y sin dolor en la interlínea.", "rec"],
+      ["Cambios de dirección y agilidad", 20, 24, 4, "Desplazamientos y giros sin dolor ni derrame."],
+      ["Vuelta al deporte y competición", 24, 28, 4, "Unos 6 meses desde la cirugía. Test de fuerza y salto ≥ 90 %, sin dolor ni derrame.", "comp"],
+    ],
   },
   menisco_cons: {
     label: "Lesión de menisco sin operar", sub: "Rotura degenerativa o pequeña rotura",
-    surgical: false, daily: [6, 10], rec: [10, 14], comp: [12, 16],
-    phases: [0.15, 0.35, 0.30, 0.20],
+    surgical: false,
+    subQ: "¿Qué tipo de lesión de menisco tienes?",
+    subtypes: [
+      { id: "traumatica", label: "Rotura por un mal gesto", sub: "Pequeña rotura traumática", f: 1.0 },
+      { id: "degenerativa", label: "Rotura degenerativa", sub: "Por desgaste, sin un golpe claro", f: 1.1 },
+      { id: "nose", label: "No lo sé", sub: "", f: 1.05 },
+    ],
+    ms: [
+      ["Dolor controlado y movilidad completa", 2, 4, 1, "Sin derrame y con la rodilla estirando del todo."],
+      ["Vida diaria sin limitaciones", 6, 8, 2, "Escaleras y agacharte sin dolor.", "daily"],
+      ["Empezar a correr", 6, 10, 3, "Sentadilla a una pierna sin dolor."],
+      ["Deporte recreativo", 8, 12, 3, "Carrera de 30 min sin dolor al día siguiente.", "rec"],
+      ["Saltos, giros y competición", 10, 14, 4, "Fuerza ≥ 90 % y giros sin dolor en la interlínea.", "comp"],
+    ],
   },
   lli: {
     label: "Esguince de ligamento lateral", sub: "Ligamento lateral interno (LLI) o externo",
-    surgical: false, daily: [3, 6], rec: [6, 9], comp: [8, 12],
-    phases: [0.20, 0.30, 0.30, 0.20],
+    surgical: false,
+    subQ: "¿Qué grado de esguince es?",
+    subtypes: [
+      { id: "g1", label: "Grado I (leve)", sub: "Duele, pero la rodilla está estable", f: 0.45 },
+      { id: "g2", label: "Grado II (moderado)", sub: "Rotura parcial, algo de holgura", f: 1.0 },
+      { id: "g3", label: "Grado III (rotura completa)", sub: "Rodilla inestable hacia los lados", f: 1.7, note: "En roturas completas del ligamento externo, o si se asocian a otras lesiones, a veces hace falta cirugía. Lo valoramos al empezar." },
+      { id: "nose", label: "No lo sé", sub: "", f: 1.0 },
+    ],
+    ms: [
+      ["Caminar sin cojera", 1, 2, 1, "Con o sin rodillera, sin dolor al apoyar."],
+      ["Movilidad completa", 2, 3, 1, "Doblas y estiras la rodilla como la otra."],
+      ["Vida diaria sin limitaciones", 2, 4, 2, "Sin dolor en el lateral de la rodilla.", "daily"],
+      ["Empezar a correr", 3, 5, 3, "Sin dolor a la palpación del ligamento y fuerza ≥ 75 %."],
+      ["Deporte recreativo", 4, 6, 3, "Carrera continua sin molestias.", "rec"],
+      ["Cambios de dirección y agilidad", 4, 6, 4, "Desplazamientos laterales sin dolor."],
+      ["Competición", 5, 8, 4, "Test de agilidad y salto sin dolor y fuerza ≥ 90 %.", "comp"],
+    ],
   },
   tendinopatia: {
     label: "Tendinopatía rotuliana", sub: "“Rodilla de saltador”, dolor bajo la rótula",
-    surgical: false, daily: [6, 10], rec: [12, 16], comp: [14, 24],
-    phases: [0.15, 0.35, 0.30, 0.20],
+    surgical: false, overuse: true, noChronic: true,
+    subQ: "¿Cómo es tu dolor de tendón?",
+    subtypes: [
+      { id: "reactiva", label: "Reciente (menos de 3 meses)", sub: "Apareció tras subir la carga de entrenamiento", f: 0.8 },
+      { id: "cronica", label: "De larga evolución", sub: "Va y viene desde hace meses o años", f: 1.2 },
+      { id: "irritable", label: "Muy irritable", sub: "Duele en reposo o mucho al día siguiente de entrenar", f: 1.3 },
+    ],
+    ms: [
+      ["Dolor controlado con isométricos", 1, 3, 1, "Dolor ≤ 3/10 durante el ejercicio y que no empeora al día siguiente."],
+      ["Fuerza pesada y lenta sin dolor", 4, 8, 2, "Prensa y sentadilla con carga alta y dolor ≤ 3/10."],
+      ["Vida diaria sin dolor", 4, 8, 2, "Escaleras y estar sentado sin molestias.", "daily"],
+      ["Carrera y saltos suaves", 8, 12, 3, "Fuerza mantenida y sin empeoramiento a las 24 h."],
+      ["Deporte recreativo", 10, 14, 3, "Saltos y carrera sin que el dolor suba al día siguiente.", "rec"],
+      ["Saltos máximos y aterrizajes", 12, 16, 4, "Volumen de saltos de tu deporte tolerado."],
+      ["Competición", 14, 20, 4, "Entrenamientos completos sin aumento del dolor.", "comp"],
+    ],
   },
   femoropatelar: {
     label: "Dolor femoropatelar", sub: "Dolor delante de la rodilla, escaleras, sentadillas",
-    surgical: false, daily: [6, 8], rec: [8, 12], comp: [12, 16],
-    phases: [0.15, 0.35, 0.30, 0.20],
+    surgical: false, overuse: true,
+    subQ: "¿Cuánto te limita el dolor?",
+    subtypes: [
+      { id: "leve", label: "Solo al hacer deporte", sub: "En el día a día estoy bien", f: 0.8 },
+      { id: "moderado", label: "También en el día a día", sub: "Escaleras, sentadillas, estar mucho rato sentado", f: 1.0 },
+      { id: "severo", label: "Me limita mucho", sub: "He dejado de hacer cosas por el dolor", f: 1.25 },
+    ],
+    ms: [
+      ["Dolor controlado ajustando la carga", 1, 3, 1, "Dolor ≤ 3/10 en tu día a día."],
+      ["Sentadilla y escaleras sin dolor", 4, 6, 2, "Fuerza de cadera y cuádriceps mejorada."],
+      ["Vida diaria sin dolor", 4, 8, 2, "Estar sentado, escaleras y agacharte sin molestias.", "daily"],
+      ["Carrera progresiva", 6, 8, 3, "Sentadilla a una pierna sin dolor."],
+      ["Deporte recreativo", 6, 10, 3, "Carrera de 30 min sin dolor al día siguiente.", "rec"],
+      ["Saltos y competición", 8, 14, 4, "Saltos y cambios de ritmo sin dolor.", "comp"],
+    ],
   },
   cintilla: {
     label: "Síndrome de la cintilla iliotibial", sub: "Dolor en la cara externa, típico del corredor",
-    surgical: false, daily: [4, 6], rec: [6, 10], comp: [8, 12],
-    phases: [0.15, 0.35, 0.30, 0.20],
+    surgical: false, overuse: true,
+    subQ: "¿Cuándo aparece el dolor?",
+    subtypes: [
+      { id: "tarde", label: "Tras muchos kilómetros", sub: "Aguanto un buen rato antes de que duela", f: 0.8 },
+      { id: "pronto", label: "A los pocos minutos de correr", sub: "", f: 1.0 },
+      { id: "diario", label: "También caminando o en escaleras", sub: "", f: 1.25 },
+    ],
+    ms: [
+      ["Dolor controlado", 1, 2, 1, "Sin dolor al caminar ni en escaleras."],
+      ["Fuerza de cadera mejorada", 3, 4, 2, "Control de la rodilla en sentadilla a una pierna."],
+      ["Vida diaria sin dolor", 2, 4, 2, "Sin molestias en el lateral de la rodilla.", "daily"],
+      ["Volver a correr sin dolor", 4, 6, 3, "Intervalos de carrera/caminata sin dolor."],
+      ["Deporte recreativo", 4, 8, 3, "30–45 min de carrera sin dolor.", "rec"],
+      ["Tiradas largas y competición", 6, 10, 4, "Volumen habitual de entrenamiento sin dolor.", "comp"],
+    ],
+  },
+  rotula: {
+    label: "Luxación de rótula", sub: "Se te salió la rótula de su sitio",
+    surgical: false,
+    subQ: "¿Cuál es tu caso?",
+    subtypes: [
+      { id: "primera", label: "Primera vez, sin operar", sub: "", f: 1.0 },
+      { id: "repetida", label: "Me ha pasado más veces", sub: "Luxaciones o subluxaciones repetidas", f: 1.2, note: "Si la rótula se sigue saliendo a pesar del trabajo de fuerza, puede plantearse cirugía (reconstrucción del LPFM)." },
+      { id: "operada", label: "Me han operado (LPFM)", sub: "Reconstrucción del ligamento patelofemoral medial", f: 1.5 },
+    ],
+    ms: [
+      ["Caminar sin muletas", 1, 3, 1, "Sin derrame y con buen control del cuádriceps."],
+      ["Movilidad completa", 4, 6, 1, "Flexión completa sin aprensión."],
+      ["Vida diaria sin limitaciones", 6, 8, 2, "Escaleras y agacharte sin sensación de que se sale.", "daily"],
+      ["Empezar a correr", 8, 12, 3, "Fuerza ≥ 75 % y sentadilla a una pierna controlada."],
+      ["Deporte recreativo", 10, 14, 3, "Carrera y gimnasio sin aprensión.", "rec"],
+      ["Cambios de dirección y agilidad", 10, 14, 4, "Giros sin sensación de inestabilidad."],
+      ["Competición", 12, 20, 4, "Test de salto ≥ 90 % y sin miedo a la luxación.", "comp"],
+    ],
   },
   artrosis: {
     label: "Artrosis o condropatía", sub: "Desgaste del cartílago, dolor de larga evolución",
-    surgical: false, daily: [8, 12], rec: [12, 16], comp: [16, 24],
-    phases: [0.15, 0.40, 0.30, 0.15],
+    surgical: false, overuse: true, noChronic: true,
+    subQ: "¿Qué grado de desgaste te han dicho que tienes?",
+    subtypes: [
+      { id: "leve", label: "Leve", sub: "Molestias puntuales", f: 0.8 },
+      { id: "moderada", label: "Moderado", sub: "Dolor frecuente, rigidez por las mañanas", f: 1.0 },
+      { id: "avanzada", label: "Avanzado", sub: "Me cuesta caminar distancias largas", f: 1.3, note: "En artrosis avanzada el ejercicio sigue siendo el primer tratamiento; si a los 3 meses no mejoras lo suficiente, lo valoramos con el traumatólogo." },
+      { id: "nose", label: "No lo sé", sub: "", f: 1.0 },
+    ],
+    ms: [
+      ["Menos dolor en el día a día", 4, 6, 1, "Primeros cambios con ejercicio adaptado y educación sobre la carga."],
+      ["Mejora clara de fuerza", 8, 12, 2, "Te levantas de la silla y subes escaleras con más facilidad."],
+      ["Vida diaria cómoda", 8, 12, 2, "Caminar, escaleras y tareas sin que el dolor te frene.", "daily"],
+      ["Caminatas largas, bici o pádel suave", 12, 16, 3, "Actividad de 45–60 min sin aumento del dolor al día siguiente.", "rec"],
+      ["Deporte más exigente", 16, 24, 4, "Carrera o deporte de raqueta con carga bien dosificada.", "comp"],
+    ],
   },
   protesis: {
     label: "Prótesis de rodilla", sub: "Prótesis total o parcial",
-    surgical: true, daily: [12, 16], rec: [20, 26], comp: [26, 36],
-    phases: [0.18, 0.32, 0.30, 0.20],
+    surgical: true, noComp: true,
+    subQ: "¿Qué prótesis te han puesto?",
+    subtypes: [
+      { id: "total", label: "Prótesis total", sub: "", f: 1.0 },
+      { id: "uni", label: "Prótesis parcial (unicompartimental)", sub: "Solo una parte de la rodilla", f: 0.7 },
+      { id: "revision", label: "Recambio de prótesis", sub: "Segunda cirugía", f: 1.3 },
+    ],
+    ms: [
+      ["Caminar sin muletas", 3, 6, 1, "Sin cojera y con extensión casi completa."],
+      ["Flexión de 110°", 6, 10, 2, "Te sientas y levantas de una silla baja sin ayuda."],
+      ["Conducir", 6, 8, 2, "Si es la rodilla derecha: fuerza y reflejos suficientes para frenar."],
+      ["Vida diaria sin limitaciones", 10, 14, 2, "Escaleras, compra y paseos sin bastón.", "daily"],
+      ["Caminatas largas y bici", 12, 16, 3, "Paseos de 45–60 min sin hinchazón al día siguiente."],
+      ["Deporte de bajo impacto", 16, 26, 4, "Golf, senderismo, natación o pádel suave.", "rec"],
+    ],
   },
   nodx: {
     label: "No lo sé / sin diagnóstico", sub: "Me duele la rodilla pero no sé qué tengo",
-    surgical: false, daily: [6, 10], rec: [10, 14], comp: [12, 18],
-    phases: [0.15, 0.35, 0.30, 0.20],
+    surgical: false, overuse: true,
+    subQ: "¿Dónde te duele?",
+    subtypes: [
+      { id: "delante", label: "Por delante o alrededor de la rótula", sub: "", f: 1.0 },
+      { id: "dentro", label: "Por la parte de dentro", sub: "", f: 1.0 },
+      { id: "fuera", label: "Por la parte de fuera", sub: "", f: 1.0 },
+      { id: "atras", label: "Por detrás o difuso", sub: "", f: 1.05 },
+    ],
+    ms: [
+      ["Valoración y dolor controlado", 1, 3, 1, "Sabemos qué te pasa y ajustamos la carga."],
+      ["Vida diaria sin dolor", 6, 10, 2, "Escaleras y agacharte sin molestias.", "daily"],
+      ["Empezar a correr", 6, 10, 3, "Sentadilla a una pierna sin dolor."],
+      ["Deporte recreativo", 10, 14, 3, "Actividad habitual sin dolor al día siguiente.", "rec"],
+      ["Saltos, giros y competición", 12, 18, 4, "Fuerza ≥ 90 % y gestos de tu deporte sin dolor.", "comp"],
+    ],
   },
 };
 
@@ -539,20 +776,21 @@ const PREVIOUS = [
 
 /* ─── Estado ─────────────────────────────────────────────────────── */
 const state = {
-  step: 0, injury: null, weeks: 4, pain: 4, symptoms: [], goal: null,
-  age: 32, days: "3", history: null, previous: [],
+  step: 0, injury: null, subtype: null, weeks: 4, pain: 4, symptoms: [], goal: null,
+  age: 32, days: "3", history: null, previous: [], trained: 4,
 };
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 
 /* ─── Render de opciones ─────────────────────────────────────────── */
 const optionSets = {
   injury: Object.entries(INJURIES).map(([id, v]) => ({ id, label: v.label, sub: v.sub })),
   symptoms: SYMPTOMS, goal: GOALS, days: DAYS, history: HISTORY, previous: PREVIOUS,
 };
+const AUTO_ADVANCE = ["injury", "subtype", "goal"];
 
-document.querySelectorAll(".options[data-name]").forEach(box => {
-  const name = box.dataset.name, multi = box.dataset.type === "multi";
-  optionSets[name].forEach(o => {
+function renderOptions(box, name, items, multi) {
+  box.innerHTML = "";
+  items.forEach(o => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "opt" + (multi ? " check" : "");
     b.setAttribute(multi ? "aria-checked" : "aria-pressed", "false");
@@ -564,14 +802,22 @@ document.querySelectorAll(".options[data-name]").forEach(box => {
         const arr = state[name], i = arr.indexOf(o.id);
         i === -1 ? arr.push(o.id) : arr.splice(i, 1);
       } else {
+        if (name === "injury" && state.injury !== o.id) state.subtype = null;
         state[name] = o.id;
       }
       syncOptions(); updateNav();
-      if (!multi && name !== "days" && name !== "history") setTimeout(next, 180);
+      if (name === "history") syncTrained();
+      if (AUTO_ADVANCE.includes(name)) setTimeout(next, 180);
     });
     box.appendChild(b);
   });
+}
+
+document.querySelectorAll(".options[data-name]").forEach(box => {
+  renderOptions(box, box.dataset.name, optionSets[box.dataset.name], box.dataset.type === "multi");
 });
+const subBox = document.getElementById("subOptions");
+subBox.dataset.name = "subtype"; subBox.dataset.type = "single";
 
 function syncOptions() {
   document.querySelectorAll(".options[data-name]").forEach(box => {
@@ -588,6 +834,7 @@ const fmtWeeks = w => w === 0 ? "< 1 sem" : w >= 104 ? "+2 años" : w >= 9 ? `${
 bindRange("weeks", v => fmtWeeks(v));
 bindRange("pain", v => `${v} / 10`);
 bindRange("age", v => `${v} años`);
+bindRange("trained", v => fmtWeeks(v));
 function bindRange(id, fmt) {
   const el = document.getElementById(id), out = document.getElementById(id + "Val");
   const upd = () => { state[id] = +el.value; out.textContent = fmt(+el.value); };
@@ -600,8 +847,9 @@ const prevBtn = document.getElementById("prevBtn"), nextBtn = document.getElemen
 
 function stepValid(i) {
   if (i === 0) return !!state.injury;
-  if (i === 4) return !!state.goal;
-  if (i === 6) return !!state.history;
+  if (i === 1) return !!state.subtype;
+  if (i === 5) return !!state.goal;
+  if (i === 7) return !!state.history;
   return true;
 }
 function updateNav() {
@@ -614,13 +862,30 @@ function show(i) {
   steps.forEach((s, k) => s.classList.toggle("active", k === i));
   document.getElementById("progressFill").style.width = `${((i + 1) / TOTAL_STEPS) * 100}%`;
   document.getElementById("progressLabel").textContent = `${String(i + 1).padStart(2, "0")} / ${String(TOTAL_STEPS).padStart(2, "0")}`;
-  if (i === 1) {
-    const surg = state.injury && INJURIES[state.injury].surgical;
-    document.getElementById("timeTitle").textContent = surg ? "¿Cuánto tiempo ha pasado desde la operación?" : "¿Cuánto tiempo llevas con la lesión?";
-    document.getElementById("timeHint").textContent = surg ? "Aproximado, en semanas desde la cirugía." : "Aproximado, en semanas desde que empezó.";
+  const inj = state.injury && INJURIES[state.injury];
+  if (i === 1 && inj) {
+    document.getElementById("subTitle").textContent = inj.subQ;
+    renderOptions(subBox, "subtype", inj.subtypes, false);
+    syncOptions();
   }
+  if (i === 2 && inj) {
+    document.getElementById("timeTitle").textContent = inj.surgical || state.subtype === "operada" ? "¿Cuánto tiempo ha pasado desde la operación?" : "¿Cuánto tiempo llevas con la lesión?";
+    document.getElementById("timeHint").textContent = inj.surgical || state.subtype === "operada" ? "Aproximado, en semanas desde la cirugía." : "Aproximado, en semanas desde que empezó.";
+  }
+  if (i === 7) syncTrained();
   updateNav();
 }
+// Semanas de trabajo real: solo se pregunta si ha hecho algo, y nunca más que el tiempo transcurrido.
+function syncTrained() {
+  const field = document.getElementById("trainedField"), el = document.getElementById("trained");
+  field.hidden = !state.history || state.history === "none";
+  el.max = Math.max(state.weeks, 1);
+  if (state.trained > state.weeks || !field.dataset.touched) state.trained = state.weeks;
+  el.value = state.trained;
+  document.getElementById("trainedVal").textContent = fmtWeeks(state.trained);
+  document.getElementById("trainedMax").textContent = `Las ${state.weeks} sem`;
+}
+document.getElementById("trained").addEventListener("input", () => { document.getElementById("trainedField").dataset.touched = "1"; });
 function next() {
   if (!stepValid(state.step)) return;
   if (state.step < TOTAL_STEPS - 1) show(state.step + 1);
@@ -630,87 +895,168 @@ nextBtn.addEventListener("click", next);
 prevBtn.addEventListener("click", () => state.step > 0 && show(state.step - 1));
 
 /* ─── Cálculo ────────────────────────────────────────────────────── */
+// Factor del perfil de la persona (edad, dolor, síntomas, constancia, historial).
+function profileFactor(inj) {
+  let f = 1;
+  const reasons = [];
+
+  if (state.age >= 55) { f *= 1.18; reasons.push(`Con ${state.age} años el tejido se adapta algo más despacio: plazos un poco más largos, pero totalmente recuperable.`); }
+  else if (state.age >= 40) { f *= 1.08; reasons.push("A partir de los 40 la adaptación a la carga es algo más lenta."); }
+  else if (state.age < 25) { f *= 0.96; reasons.push("Tu edad juega a favor: la capacidad de adaptación es alta."); }
+
+  if (state.pain >= 7) { f *= 1.12; reasons.push(`Un dolor de ${state.pain}/10 indica que primero hay que calmar la rodilla antes de cargarla.`); }
+  else if (state.pain >= 4) { f *= 1.04; }
+  else { reasons.push(`Tu dolor es bajo (${state.pain}/10): buena base para progresar en carga.`); }
+
+  let symW = 0;
+  state.symptoms.forEach(id => { symW += SYMPTOMS.find(s => s.id === id).w; });
+  f *= 1 + Math.min(symW, 0.35);
+  if (state.symptoms.includes("extension")) reasons.push("Recuperar la extensión completa es la prioridad nº 1: sin ella, todo lo demás se retrasa.");
+  if (state.symptoms.includes("giving")) reasons.push("La sensación de fallo pide trabajo específico de fuerza y control antes de volver a pivotar.");
+  if (state.symptoms.includes("swelling")) reasons.push("La hinchazón tras la actividad marca que la carga aún hay que dosificarla.");
+
+  if (inj.overuse && !inj.noChronic && state.weeks > 12) {
+    f *= state.weeks > 52 ? 1.15 : 1.08;
+    reasons.push(`Llevas ${fmtWeeks(state.weeks)} con molestias: en lesiones de larga evolución hay que reeducar también al sistema nervioso, no solo al tejido.`);
+  }
+
+  const d = DAYS.find(x => x.id === state.days);
+  f *= d.f;
+  if (d.f > 1) reasons.push("Con 1–2 días por semana la progresión es más lenta. 3–4 días es el punto ideal.");
+  if (d.f < 1) reasons.push("Tu disponibilidad semanal es excelente para avanzar rápido.");
+
+  const h = HISTORY.find(x => x.id === state.history);
+  f *= h.f;
+  if (state.history === "alone") reasons.push("Los ejercicios genéricos suelen dejar huecos (fuerza, control, salto) que luego frenan la vuelta.");
+  if (state.history === "partial") reasons.push("Retomar una recuperación a medias suele requerir reconstruir la base de fuerza.");
+  if (state.history === "guided") reasons.push("Ya tienes un plan en marcha: eso acorta los plazos.");
+
+  state.previous.forEach(id => { f *= 1 + PREVIOUS.find(p => p.id === id).w; });
+  if (state.previous.includes("relapse")) reasons.push("Una lesión previa en la misma rodilla aumenta el riesgo de recaída: conviene más tiempo en readaptación.");
+
+  return { f: Math.min(Math.max(f, 0.88), 1.5), reasons };
+}
+
+// Calidad del trabajo hecho: cuánto de cada semana entrenada cuenta como progreso real.
+const WORK_QUALITY = { guided: 1, partial: 0.85, alone: 0.6, none: 0 };
+
 function calculate() {
   const inj = INJURIES[state.injury];
+  const sub = inj.subtypes.find(x => x.id === state.subtype);
+  const s = state.symptoms;
   let goal = state.goal;
   const notes = [];
+  if (sub.note) notes.push(sub.note);
 
-  // Con prótesis no se recomienda deporte de contacto: se ajusta a recreativo.
-  if (state.injury === "protesis" && goal === "comp") {
+  if (inj.noComp && goal === "comp") {
     goal = "rec";
     notes.push("Con prótesis el objetivo realista es deporte de bajo impacto; he ajustado el cálculo a deporte recreativo.");
   }
-  const [bMin, bMax] = inj[goal];
-  let factor = 1;
-  const factors = [];
 
-  // Edad
-  if (state.age >= 55) { factor *= 1.18; factors.push(`Con ${state.age} años el tejido se adapta algo más despacio: plazos un poco más largos, pero totalmente recuperable.`); }
-  else if (state.age >= 40) { factor *= 1.08; factors.push(`A partir de los 40 la adaptación a la carga es algo más lenta.`); }
-  else if (state.age < 25) { factor *= 0.96; factors.push(`Tu edad juega a favor: la capacidad de adaptación es alta.`); }
+  const pf = profileFactor(inj);
+  const reasons = [...pf.reasons];
+  const goalRaw = inj.ms.find(m => m[5] === goal);
+  const goalBase = (goalRaw[1] + goalRaw[2]) / 2 * sub.f;
 
-  // Dolor
-  if (state.pain >= 7) { factor *= 1.12; factors.push(`Un dolor de ${state.pain}/10 indica que primero hay que calmar la rodilla antes de cargarla.`); }
-  else if (state.pain >= 4) { factor *= 1.04; }
-  else { factors.push(`Tu dolor es bajo (${state.pain}/10): buena base para progresar en carga.`); }
+  // Hitos sobre una línea temporal de "recuperación bien hecha".
+  // Los tempranos dependen sobre todo de la biología del tejido; el perfil pesa más en los finales.
+  const milestones = inj.ms.map(([label, lo, hi, phase, crit, tag]) => {
+    const baseMid = (lo + hi) / 2 * sub.f;
+    if (baseMid > goalBase + 0.01) return null;
+    const weight = Math.min(Math.max(baseMid / goalBase, 0.3), 1);
+    const f = 1 + (pf.f - 1) * weight;
+    let mid = baseMid * f, min = lo * sub.f * f, max = hi * sub.f * f;
+    if (inj.surgical && f < 1) { min = Math.max(min, lo * sub.f); mid = Math.max(mid, baseMid); }
+    return { label, phase, crit, tag, isGoal: tag === goal, raw: mid, mid: Math.round(mid), min: Math.round(min), max: Math.max(Math.round(max), Math.round(mid)) };
+  }).filter(Boolean).sort((a, b) => a.raw - b.raw || a.isGoal - b.isGoal);
+  const goalMs = milestones.find(m => m.isGoal);
 
-  // Síntomas
-  let symW = 0;
-  state.symptoms.forEach(id => { symW += SYMPTOMS.find(s => s.id === id).w; });
-  symW = Math.min(symW, 0.35);
-  factor *= 1 + symW;
-  if (state.symptoms.includes("extension")) factors.push("Recuperar la extensión completa es la prioridad nº 1: sin ella, todo lo demás se retrasa.");
-  if (state.symptoms.includes("giving")) factors.push("La sensación de fallo pide trabajo específico de fuerza y control antes de volver a pivotar.");
-  if (state.symptoms.includes("swelling")) factors.push("La hinchazón tras la actividad marca que la carga aún hay que dosificarla.");
+  // Final de cada fase en la línea temporal (phaseEnd[k] = semana en la que se completa la fase k).
+  const phaseEnd = [0, 0, 0, 0, 0];
+  milestones.forEach(m => { phaseEnd[m.phase] = Math.max(phaseEnd[m.phase], m.raw); });
+  for (let k = 1; k <= 4; k++) phaseEnd[k] = Math.max(phaseEnd[k], phaseEnd[k - 1]);
 
-  // Cronicidad (lesiones no quirúrgicas de larga evolución)
-  if (!inj.surgical && state.weeks > 12) {
-    factor *= state.weeks > 52 ? 1.15 : 1.08;
-    factors.push(`Llevas ${fmtWeeks(state.weeks)} con molestias: en lesiones de larga evolución hay que reeducar también al sistema nervioso, no solo al tejido.`);
+  /*
+    Punto real de recuperación (en semanas de esa línea temporal):
+    - El tiempo solo cura el tejido: cuenta como mucho hasta el final de la fase 1.
+      En lesiones por sobrecarga ni eso, porque no hay una herida que cicatrice.
+    - La fuerza, el control y la vuelta al deporte solo avanzan con semanas de trabajo,
+      multiplicadas por su calidad (con fisio, a medias, por su cuenta).
+  */
+  const elapsed = state.weeks;
+  const quality = WORK_QUALITY[state.history];
+  const trained = state.history === "none" ? 0 : Math.min(state.trained, elapsed);
+  const worked = trained * quality;
+  const healed = inj.overuse ? 0 : Math.min(elapsed, phaseEnd[1]);
+  let pos = Math.max(healed, worked);
+
+  // Los síntomas dicen hasta qué fase se ha completado de verdad, aunque el calendario diga otra cosa.
+  let cap = 4;
+  if (s.includes("noweight") || s.includes("extension") || s.includes("locking")) cap = 0;
+  else if (s.includes("giving") || state.pain >= 6) cap = 1;
+  else if (s.includes("swelling") || s.includes("night")) cap = 2;
+  else if (state.pain >= 4 || s.includes("stairs")) cap = 3;
+  pos = Math.min(pos, phaseEnd[cap]);
+
+  // Semanas sin trabajar: hay que recuperar la fuerza perdida además de avanzar.
+  const untreated = Math.max(0, elapsed - trained);
+  let detrain = 1;
+  if (!inj.overuse && untreated > 8) {
+    detrain = untreated > 26 ? 1.15 : 1.08;
+    reasons.push(`Han pasado ${fmtWeeks(untreated)} sin trabajar la rodilla: el músculo se ha debilitado y hay que reconstruir esa fuerza antes de avanzar.`);
+  }
+  if (state.injury === "lca_cons" && untreated > 12) {
+    reasons.push("Una rodilla sin LCA que no se ha fortalecido sufre más en cada fallo: el menisco y el cartílago son los que más lo pagan. Por eso conviene empezar cuanto antes.");
+  }
+  if (elapsed > 0 && pos < elapsed * 0.6 && !inj.overuse) {
+    reasons.push(`Llevas ${fmtWeeks(elapsed)} desde ${inj.surgical || sub.id === "operada" ? "la cirugía" : "la lesión"}, pero tu progreso real equivale a la semana ${Math.round(pos)}: el tiempo cura el tejido, pero la fuerza y el control solo llegan entrenando.`);
   }
 
-  // Días disponibles
-  const d = DAYS.find(x => x.id === state.days);
-  factor *= d.f;
-  if (d.f > 1) factors.push("Con 1–2 días por semana la progresión es más lenta. 3–4 días es el punto ideal.");
-  if (d.f < 1) factors.push("Tu disponibilidad semanal es excelente para avanzar rápido.");
+  // Lo que falta: desde el punto real hasta el objetivo.
+  // Si el calendario va muy por delante del progreso, el tejido ya ha madurado (p. ej. el injerto de LCA)
+  // y no hay que esperar a la biología: solo falta el entrenamiento, que puede ir algo más rápido.
+  const lag = inj.overuse ? 0 : Math.min(1, Math.max(0, elapsed - pos) / goalMs.raw);
+  const speed = 1 - (inj.surgical ? 0.35 : 0.15) * lag;
+  let remMid = (goalMs.raw - pos) * detrain * speed, remMin = (goalMs.min - pos) * detrain * speed, remMax = (goalMs.max - pos) * detrain * speed;
+  // Plazos mínimos por calendario (p. ej. no competir antes de 9 meses tras un LCA).
+  const floor = inj.floor && inj.floor[goal];
+  if (floor && remMid < floor + 1 - elapsed) {
+    remMid = floor + 1 - elapsed; remMin = Math.max(remMin, floor - elapsed); remMax = Math.max(remMax, remMid + 2);
+    reasons.push("Volver a competir antes de los 9 meses tras una cirugía de LCA multiplica el riesgo de volver a romperlo. Por cada mes que esperas hasta ese punto, el riesgo baja de forma notable.");
+  }
+  const pastPlazo = pos >= goalMs.raw - 0.5;
+  if (pastPlazo) {
+    // Ya ha hecho el recorrido: queda comprobar con test y cerrar la vuelta.
+    [remMin, remMid, remMax] = [2, 3, 4];
+  }
+  remMin = Math.max(1, Math.round(remMin)); remMid = Math.max(remMin, Math.round(remMid)); remMax = Math.max(remMid, Math.round(remMax));
 
-  // Historial
-  const h = HISTORY.find(x => x.id === state.history);
-  factor *= h.f;
-  if (state.history === "alone") factors.push("Los ejercicios genéricos suelen dejar huecos (fuerza, control, salto) que luego frenan la vuelta.");
-  if (state.history === "partial") factors.push("Retomar una recuperación a medias suele requerir reconstruir la base de fuerza.");
-  if (state.history === "guided") factors.push("Ya tienes un plan en marcha: eso acorta los plazos.");
+  // Estado de cada hito, siempre en orden: conseguidos → estás aquí → siguientes.
+  let open = false;
+  milestones.forEach(m => {
+    const done = !open && !m.isGoal && m.phase <= cap && pos >= m.raw - 0.25;
+    m.status = done ? "done" : open ? "next" : "now";
+    if (!done) open = true;
+  });
+  const pending = milestones.filter(m => m.status !== "done");
+  const span = Math.max(goalMs.raw - pos, 0.01);
+  pending.forEach(m => {
+    // Reparte lo que queda proporcionalmente a la distancia de cada hito.
+    const share = Math.min(Math.max((m.raw - pos) / span, 0), 1);
+    m.inWeeks = m.isGoal ? remMid : Math.max(m.status === "now" ? 0 : 1, Math.round(remMid * share));
+  });
 
-  state.previous.forEach(id => { factor *= 1 + PREVIOUS.find(p => p.id === id).w; });
-  if (state.previous.includes("relapse")) factors.push("Una lesión previa en la misma rodilla aumenta el riesgo de recaída: conviene más tiempo en readaptación.");
-
-  const totalMin = Math.round(bMin * factor), totalMax = Math.round(bMax * factor);
-  const total = (totalMin + totalMax) / 2;
-  const elapsed = state.weeks;
-
-  let remMin = Math.max(totalMin - elapsed, 0), remMax = Math.max(totalMax - elapsed, 0);
-  const pastPlazo = remMax <= 1;
-  if (pastPlazo) { remMin = 4; remMax = 8; }
-  if (remMin < 1) remMin = 1;
-
-  // Fase actual (en el plazo medio). Si ya ha superado el plazo, se le ubica por síntomas.
-  const cuts = []; let acc = 0;
-  inj.phases.forEach(p => { acc += p; cuts.push(acc * total); });
-  let phaseIdx = cuts.findIndex(c => elapsed < c);
-  if (phaseIdx === -1) phaseIdx = 3;
-  if (pastPlazo) phaseIdx = state.symptoms.length >= 2 || state.pain >= 5 ? 1 : 2;
-  if (state.symptoms.includes("extension") || state.symptoms.includes("noweight")) phaseIdx = Math.min(phaseIdx, 0);
-
-  const progress = pastPlazo ? Math.round((phaseIdx / 4) * 100 + 10) : Math.min(95, Math.round((elapsed / total) * 100));
-
-  // Sin seguimiento: plazos más largos y menos predecibles
-  const withoutMin = Math.round(remMin * 1.3), withoutMax = Math.round(remMax * 1.5);
-
+  const phaseIdx = (pending[0] || goalMs).phase - 1;
+  const progress = Math.min(95, Math.round(pos / goalMs.raw * 100));
+  const target = new Date(); target.setDate(target.getDate() + remMid * 7);
   const goalText = { daily: "tu vida diaria sin dolor", rec: "tu deporte", comp: "competir" }[goal];
-  const target = new Date(); target.setDate(target.getDate() + Math.round((remMin + remMax) / 2) * 7);
 
-  state.result = { inj, goal, goalText, totalMin, totalMax, remMin, remMax, phaseIdx, progress, pastPlazo, target, factors, notes, withoutMin, withoutMax };
+  state.result = {
+    inj, sub, goal, goalText, milestones, goalMs, remMin, remMid, remMax, phaseIdx, progress,
+    pastPlazo, pos: Math.round(pos), elapsed, worked: Math.round(worked), target, reasons, notes,
+    fromTreatment: !!inj.overuse, phaseEnd,
+    withoutMin: Math.round(remMin * 1.3), withoutMax: Math.round(remMax * 1.5),
+  };
   renderResult();
 }
 
@@ -718,6 +1064,7 @@ function calculate() {
 const $ = id => document.getElementById(id);
 const fmtRange = (a, b) => a === b ? `${a}` : `${a}–${b}`;
 const months = w => (w / 4.345).toFixed(w < 13 ? 1 : 0).replace(".0", "").replace(".", ",");
+const fmtDate = d => d.toLocaleDateString("es-ES", { month: "short", year: "numeric" });
 
 function renderResult() {
   const r = state.result;
@@ -726,14 +1073,27 @@ function renderResult() {
 
   $("resTitle").innerHTML = r.pastPlazo
     ? `Tu rodilla necesita un <em>último empujón</em>`
-    : `Te quedan aprox. para volver a <em>${r.goalText}</em>`;
-  $("resBig").innerHTML = `${fmtRange(r.remMin, r.remMax)}<small>semanas</small>`;
+    : `Lo más probable es que vuelvas a <em>${r.goalText}</em> en`;
+  $("resBig").innerHTML = `${r.remMid}<small>semanas</small>`;
   $("resSub").textContent = r.pastPlazo
-    ? `Por tiempo ya deberías estar recuperado, pero tus síntomas dicen que algo se ha quedado a medias. Con un plan enfocado, ${r.remMin}–${r.remMax} semanas suelen bastar para cerrar el proceso.`
-    : `Recuperación total estimada: ${fmtRange(r.totalMin, r.totalMax)} semanas (unos ${months(r.totalMin)}–${months(r.totalMax)} meses) · ${r.inj.label}.`;
+    ? `Has hecho el recorrido. Lo que queda es comprobar con test de fuerza y salto que tu rodilla está lista y cerrar la vuelta: ${fmtRange(r.remMin, r.remMax)} semanas.`
+    : `Rango realista: ${fmtRange(r.remMin, r.remMax)} semanas · ${r.inj.label} (${r.sub.label}). Una recuperación completa y bien hecha son unas ${r.goalMs.mid} semanas (≈ ${months(r.goalMs.mid)} meses).`;
   $("kpiPhase").textContent = `${String(r.phaseIdx + 1).padStart(2, "0")} · ${PHASES[r.phaseIdx].name.split(" ")[0]}`;
   $("kpiProgress").textContent = `${r.progress}%`;
-  $("kpiDate").textContent = r.target.toLocaleDateString("es-ES", { month: "short", year: "numeric" });
+
+  // Tiempo transcurrido frente a progreso real
+  const since = r.fromTreatment ? "con molestias" : r.inj.surgical || r.sub.id === "operada" ? "desde la cirugía" : "desde la lesión";
+  const scale = Math.max(r.elapsed, r.goalMs.mid, 1);
+  $("realBars").innerHTML = [
+    [`Tiempo ${since}`, `${r.elapsed} sem`, r.elapsed / scale * 100],
+    ["Progreso real de recuperación", `sem ${r.pos} de ${r.goalMs.mid}`, r.pos / scale * 100],
+  ].map(([l, v, w]) => `<div class="bar-row"><div class="bar-top"><span>${l}</span><b>${v}</b></div><div class="bar"><i style="width:${Math.max(w, 1)}%"></i></div></div>`).join("");
+  $("realNote").textContent = r.pos >= r.elapsed - 1
+    ? "Tu progreso va acorde con el tiempo: el trabajo que has hecho está dando resultado."
+    : r.fromTreatment
+      ? "En las lesiones por sobrecarga el tiempo con dolor no cura por sí solo: el reloj de la recuperación empieza cuando empiezas a trabajar bien."
+      : "El tiempo cicatriza el tejido, pero la fuerza, el control y la confianza solo llegan entrenando. Por eso tu punto real va por detrás del calendario.";
+  $("kpiDate").textContent = fmtDate(r.target);
 
   // Alertas
   const flags = state.symptoms.filter(id => SYMPTOMS.find(s => s.id === id).flag);
@@ -746,20 +1106,38 @@ function renderResult() {
   r.notes.forEach(n => alertHtml += `<div class="alert" style="background:var(--card);border-color:var(--line)"><p>${n}</p></div>`);
   $("alertBox").innerHTML = alertHtml;
 
-  // Línea temporal
-  const totalMid = (r.totalMin + r.totalMax) / 2;
-  $("timeline").innerHTML = r.inj.phases.map(p => `<i style="width:${p * 100}%"></i>`).join("");
-  $("marker").style.left = `${Math.min(r.progress, 100)}%`;
-  $("legendEnd").textContent = `Semana ${Math.round(totalMid)}`;
+  // Fases calculadas a partir de los hitos
+  const total = r.goalMs.mid;
+  const ends = [0, 0, 0, 0];
+  r.milestones.forEach(m => { ends[m.phase - 1] = Math.max(ends[m.phase - 1], m.mid); });
+  for (let i = 1; i < 4; i++) if (!ends[i]) ends[i] = ends[i - 1];
+  ends[3] = total;
+  const usedPhases = [...new Set(r.milestones.map(m => m.phase - 1))];
+  const widths = ends.map((e, i) => (e - (i ? ends[i - 1] : 0)) / total * 100);
 
-  let acc = 0;
+  $("timeline").innerHTML = widths.map(w => `<i style="width:${w}%"></i>`).join("");
+  $("marker").style.left = `${Math.min(r.pastPlazo ? 100 : r.progress, 100)}%`;
+  $("legendEnd").textContent = `Semana ${total} de recuperación`;
+
   $("phases").innerHTML = PHASES.map((ph, i) => {
-    const from = Math.round(acc * totalMid); acc += r.inj.phases[i]; const to = Math.round(acc * totalMid);
+    if (!usedPhases.includes(i)) return "";
+    const from = i ? ends[i - 1] : 0, to = ends[i];
     const cls = i < r.phaseIdx ? "done" : i === r.phaseIdx ? "current" : "";
     const tag = i < r.phaseIdx ? `<span class="phase-tag done">Superada</span>` : i === r.phaseIdx ? `<span class="phase-tag">Estás aquí</span>` : "";
     return `<div class="phase ${cls}"><div class="phase-n">${String(i + 1).padStart(2, "0")}</div><div>
       <div class="phase-head"><h3>${ph.name}</h3><span class="phase-weeks">sem ${from}–${to}</span>${tag}</div>
       <p>${ph.desc}</p></div></div>`;
+  }).join("");
+
+  // Hitos
+  $("milestones").innerHTML = r.milestones.map(m => {
+    const date = new Date(); date.setDate(date.getDate() + m.inWeeks * 7);
+    let when;
+    if (m.status === "done") when = `<b>Conseguido</b>`;
+    else if (m.status === "now") when = `<b>Estás aquí</b><span>${m.inWeeks ? `en ~${m.inWeeks} sem` : "esta semana"}</span>`;
+    else when = `<b>en ~${m.inWeeks} sem</b><span>≈ ${fmtDate(date)}</span>`;
+    const cls = [m.status, m.isGoal ? "goal" : ""].join(" ");
+    return `<div class="ms ${cls}"><span class="ms-dot"></span><span class="ms-title">${m.label}${m.isGoal ? " · tu objetivo" : ""}</span><span class="ms-when">${when}</span><span class="ms-crit">${m.crit}</span></div>`;
   }).join("");
 
   // Barras de estado
@@ -772,7 +1150,7 @@ function renderResult() {
   ];
   $("bars").innerHTML = bars.map(([l, v]) => `<div class="bar-row"><div class="bar-top"><span>${l}</span><b>${v}%</b></div><div class="bar"><i style="width:${v}%"></i></div></div>`).join("");
 
-  const fs = r.factors.length ? r.factors : ["Tu perfil no tiene factores que alarguen el plazo: buena noticia."];
+  const fs = r.reasons.length ? r.reasons : ["Tu perfil no tiene factores que alarguen el plazo: buena noticia."];
   $("factors").innerHTML = fs.map(f => `<li>${f}</li>`).join("");
 
   $("cmpWith").textContent = `${fmtRange(r.remMin, r.remMax)} sem`;
@@ -787,16 +1165,18 @@ $("leadForm").addEventListener("submit", e => {
   const r = state.result;
   const mode = document.querySelector('input[name="mode"]:checked').value;
   const symptomLabels = state.symptoms.map(id => SYMPTOMS.find(s => s.id === id).label).join(", ") || "ninguno";
+  const nextMs = r.milestones.find(m => m.status !== "done");
   const msg = [
     `Hola Carlos, soy ${$("leadName").value.trim()}. He usado tu calculadora de rodilla:`,
     ``,
-    `• Lesión: ${r.inj.label}`,
+    `• Lesión: ${r.inj.label} (${r.sub.label})`,
     `• Tiempo: ${fmtWeeks(state.weeks)}`,
     `• Dolor: ${state.pain}/10`,
     `• Síntomas: ${symptomLabels}`,
     `• Objetivo: ${GOALS.find(g => g.id === state.goal).label}`,
     `• Edad: ${state.age}`,
-    `• Estimación: ${fmtRange(r.remMin, r.remMax)} semanas (fase ${r.phaseIdx + 1}: ${PHASES[r.phaseIdx].name})`,
+    `• Estimación: ${r.remMid} semanas (rango ${fmtRange(r.remMin, r.remMax)}), fase ${r.phaseIdx + 1}: ${PHASES[r.phaseIdx].name}`,
+    nextMs ? `• Próximo hito: ${nextMs.label}` : "",
     ``,
     `Me interesa: ${mode}.`,
     $("leadEmail").value ? `Email: ${$("leadEmail").value.trim()}` : "",
@@ -808,7 +1188,7 @@ $("leadForm").addEventListener("submit", e => {
 });
 
 $("restartBtn").addEventListener("click", () => {
-  Object.assign(state, { injury: null, symptoms: [], goal: null, history: null, previous: [], days: "3" });
+  Object.assign(state, { injury: null, subtype: null, symptoms: [], goal: null, history: null, previous: [], days: "3" });
   syncOptions();
   $("result").classList.remove("show");
   $("quiz").style.display = "";
