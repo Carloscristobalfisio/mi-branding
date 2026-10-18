@@ -261,7 +261,6 @@ a { color: inherit; }
       <button class="btn btn-light" id="copyBtn" type="button">Copiar mi resultado</button>
       <a class="btn btn-ghost" href="https://wa.me/34674613651" target="_blank" rel="noopener">Escríbeme por WhatsApp →</a>
       <a class="btn btn-ghost" href="https://www.instagram.com/carloscristobalfisio/" target="_blank" rel="noopener">Instagram →</a>
-      <a class="btn btn-ghost" href="https://carloscristobalfisioterapia.com" target="_blank" rel="noopener">Pide tu valoración →</a>
     </div>
     <p class="wa-num">WhatsApp: <b>+34 674 613 651</b></p>
     <div class="copy-status" id="copyStatus"></div>
@@ -404,7 +403,7 @@ a { color: inherit; }
       const back = `<button class="link-btn" type="button" data-act="back" ${state.step === 0 ? "disabled" : ""}>← Anterior</button>`;
       if (s.alarms) {
         html = top + `<h2 class="quiz-q" tabindex="-1">¿Te pasa ahora alguna de estas cosas?</h2>
-          <p class="hint">No son un freno normal y conviene que las vea un profesional en persona. Si no te pasa ninguna, sigue.</p>
+          <p class="hint">No son un freno normal y conviene pedir ayuda profesional. Si no te pasa ninguna, sigue.</p>
           <div class="checks">${ALARMS.map((a, i) => `<label class="check" for="alarm-${i}"><input type="checkbox" id="alarm-${i}" data-alarm="${i}" ${state.alarms.includes(i) ? "checked" : ""}><span>${esc(a)}</span></label>`).join("")}</div>
           <div class="quiz-nav">${back}<button class="btn btn-dark" type="button" data-act="finish">Ver mi informe →</button></div>`;
       } else {
@@ -499,8 +498,8 @@ a { color: inherit; }
         : `<span class="pill done">Completo</span><span>Has respondido las ${TOTAL} preguntas.</span>`) + `</div>`;
 
     if (!isExample && state.alarms.length) {
-      html += `<div class="alarm"><b>Antes de seguir con ejercicios, consulta en persona.</b>
-        <span>Has marcado ${state.alarms.length === 1 ? "una señal" : state.alarms.length + " señales"} que no encaja${state.alarms.length === 1 ? "" : "n"} con un freno normal de la recuperación. Conviene que te vea un médico o fisioterapeuta antes de cargar la rodilla. Si hay dolor e hinchazón en la pantorrilla o no puedes apoyar, que sea cuanto antes.</span></div>`;
+      html += `<div class="alarm"><b>Te recomiendo pedir ayuda profesional.</b>
+        <span>Has marcado ${state.alarms.length === 1 ? "una señal" : state.alarms.length + " señales"} que no encaja${state.alarms.length === 1 ? "" : "n"} con un freno normal de la recuperación. Pide ayuda a un profesional sanitario para que valore tu rodilla. Si hay dolor e hinchazón en la pantorrilla o no puedes apoyar, que sea cuanto antes.</span></div>`;
     }
 
     if (!ranked.length) {
