@@ -92,11 +92,11 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 </style>
 
 <div class="wrap">
-  <div class="brand"><span><b>Carlos Cristóbal</b> · Fisioterapia</span><span class="badge">Readaptación</span></div>
+  <div class="brand"><span><b>Carlos Cristóbal</b> · Fisioterapia</span><span class="badge">Rodilla</span></div>
 
   <header>
     <h1>¿Cuándo vuelvo a <em>correr?</em></h1>
-    <p class="lead">5 preguntas rápidas. Tardas menos de un minuto.</p>
+    <p class="lead">Para lesiones de rodilla: LCA, menisco y cartílago. 5 preguntas, menos de un minuto.</p>
   </header>
 
   <div class="progress" id="progress" aria-hidden="true"></div>
@@ -104,37 +104,46 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 </div>
 
 <script>
-// Semanas totales desde la lesión (u operación) hasta volver a correr: [mínimo, máximo]
+// Semanas desde la lesión (u operación) hasta volver a correr: [mínimo, máximo]
 const INJURIES = {
-  tobillo: { name: "Esguince de tobillo", hint: "Me torcí el tobillo", ranges: [[1,3],[3,6],[6,12]] },
-  musculo: { name: "Rotura muscular", hint: "Gemelo, isquio, cuádriceps… noté un pinchazo", ranges: [[2,4],[4,8],[8,12]] },
-  tendon:  { name: "Dolor de tendón", hint: "Aquiles o debajo de la rótula", ranges: [[3,6],[6,12],[10,20]] },
-  rodilla: { name: "Dolor de rodilla", hint: "Sin operar", ranges: [[2,4],[4,8],[8,12]] },
-  tibia:   { name: "Dolor en la tibia", hint: "Periostitis o fractura por estrés", ranges: [[2,4],[4,8],[8,14]] },
-  lca:     { name: "Me operaron del LCA", hint: "Ligamento cruzado anterior", ranges: [[12,18],[12,20],[16,24]] }
+  lca: { name: "LCA", hint: "Ligamento cruzado anterior",
+    q: "¿Te operaron?",
+    types: [
+      { t: "Sí, solo el ligamento", s: "Plastia de LCA", r: [12, 16] },
+      { t: "Sí, y me quitaron un trozo de menisco", s: "Plastia + meniscectomía", r: [12, 18] },
+      { t: "Sí, y me cosieron el menisco", s: "Plastia + sutura de menisco", r: [16, 22] },
+      { t: "No me operaron", s: "Tratamiento sin cirugía", r: [8, 14] }] },
+  menisco: { name: "Menisco", hint: "Rotura o lesión de menisco",
+    q: "¿Qué te hicieron?",
+    types: [
+      { t: "Me quitaron un trozo", s: "Meniscectomía", r: [4, 8] },
+      { t: "Me lo cosieron", s: "Sutura de menisco", r: [12, 16] },
+      { t: "No me operaron", s: "Tratamiento sin cirugía", r: [4, 10] }] },
+  cartilago: { name: "Cartílago", hint: "Condropatía, lesión condral",
+    q: "¿Qué te hicieron?",
+    types: [
+      { t: "No me operaron", s: "Condropatía o desgaste", r: [4, 10] },
+      { t: "Me hicieron microfracturas", s: "Estimulación de médula ósea", r: [16, 24] },
+      { t: "Me pusieron un injerto de cartílago", s: "Mosaicoplastia, implante de condrocitos…", r: [20, 36] }] }
 };
 
 const QUESTIONS = [
-  { id: "injury", text: "¿Qué te ha pasado?",
+  { id: "injury", text: "¿Qué te pasó en la rodilla?",
     options: () => Object.entries(INJURIES).map(([v, i]) => ({ v, t: i.name, s: i.hint })) },
-  { id: "level",
-    text: a => a.injury === "lca" ? "¿Te tocaron también el menisco?" : "¿Cómo de fuerte fue al principio?",
-    options: a => a.injury === "lca"
-      ? [{ v: 0, t: "No", s: "Solo el ligamento" },
-         { v: 1, t: "Sí, me quitaron un trozo", s: "Meniscectomía" },
-         { v: 2, t: "Sí, me lo cosieron", s: "Sutura de menisco" }]
-      : [{ v: 0, t: "Flojito", s: "Podía andar casi normal" },
-         { v: 1, t: "Normal", s: "Cojeé unos días" },
-         { v: 2, t: "Fuerte", s: "No podía apoyar o tuve que parar del todo" }] },
+  { id: "type", text: a => INJURIES[a.injury].q,
+    options: a => INJURIES[a.injury].types.map((x, i) => ({ v: i, t: x.t, s: x.s })) },
   { id: "elapsed",
-    text: a => a.injury === "lca" ? "¿Hace cuánto te operaron?" : "¿Hace cuánto pasó?",
+    text: a => INJURIES[a.injury].types[a.type].t.startsWith("No") ? "¿Hace cuánto te lesionaste?" : "¿Hace cuánto te operaron?",
     options: () => [
-      { v: 1, t: "Menos de 2 semanas" }, { v: 3, t: "Entre 2 y 4 semanas" },
-      { v: 6, t: "1 o 2 meses" }, { v: 12, t: "2 a 4 meses" }, { v: 18, t: "Más de 4 meses" }] },
-  { id: "hop", text: "¿Puedes saltar 10 veces a la pata coja con la pierna lesionada?",
-    help: "Pruébalo ahora si puedes. Sin forzar.",
+      { v: 1, t: "Menos de 2 semanas" }, { v: 4, t: "Entre 2 y 6 semanas" },
+      { v: 9, t: "Entre 6 semanas y 3 meses" }, { v: 16, t: "Entre 3 y 5 meses" }, { v: 24, t: "Más de 5 meses" }] },
+  { id: "level", text: "¿Qué puedes hacer ya sin dolor?",
+    help: "Elige lo más difícil que te salga bien.",
     options: () => [
-      { v: "si", t: "Sí, sin dolor" }, { v: "molesta", t: "Sí, pero me molesta" }, { v: "no", t: "No puedo" }] },
+      { v: 0, t: "Ando con muletas o cojeando" },
+      { v: 1, t: "Ando normal" },
+      { v: 2, t: "Sentadilla a una pierna", s: "Con la pierna lesionada, sin que se meta la rodilla hacia dentro" },
+      { v: 3, t: "Saltar a la pata coja", s: "10 saltos seguidos con la pierna lesionada" }] },
   { id: "rehab", text: "¿Estás haciendo ejercicios para recuperarte?",
     options: () => [
       { v: 1, t: "Sí, con un fisio" }, { v: 1.15, t: "Sí, por mi cuenta" },
@@ -172,7 +181,7 @@ function renderQuestion() {
     </section>`;
   app.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
     const o = opts[+b.dataset.i];
-    if (q.id === "injury" && answers.injury !== o.v) delete answers.level;
+    if (q.id === "injury" && answers.injury !== o.v) delete answers.type;
     answers[q.id] = o.v;
     b.classList.add("sel");
     setTimeout(() => { step++; render(); }, 160);
@@ -182,11 +191,12 @@ function renderQuestion() {
 }
 
 function estimate(a) {
-  const [bMin, bMax] = INJURIES[a.injury].ranges[a.level];
+  const [bMin, bMax] = INJURIES[a.injury].types[a.type].r;
   let min = bMin * a.rehab - a.elapsed;
   let max = bMax * a.rehab - a.elapsed;
-  const floor = { si: [0, 1], molesta: [1, 3], no: [2, 4] }[a.hop];
-  const shift = { si: [-1, -2], molesta: [0, 0], no: [1, 2] }[a.hop];
+  // Lo que ya puede hacer marca un mínimo realista, pase el tiempo que pase
+  const floor = [[4, 8], [2, 5], [1, 3], [0, 1]][a.level];
+  const shift = [[2, 3], [1, 2], [0, 0], [-1, -2]][a.level];
   min = Math.max(floor[0], Math.round(min + shift[0]));
   max = Math.max(floor[1], Math.round(max + shift[1]), min + 1);
   return { min, max };
@@ -199,38 +209,42 @@ function renderResult() {
   d.setDate(d.getDate() + Math.round((min + max) / 2 * 7));
   const when = d.toLocaleDateString("es-ES", { day: "numeric", month: "long" });
   const ready = min === 0;
+  const operated = !INJURIES[a.injury].types[a.type].t.startsWith("No");
 
   const tips = [];
-  if (a.hop === "no") tips.push("Ahora mismo lo que más te frena es que todavía no puedes saltar. Cuando lo consigas sin dolor, el resto va rápido.");
-  if (a.hop === "molesta") tips.push("Estás cerca. Esa molestia al saltar es la señal de que aún hay que fortalecer un poco más.");
+  if (a.level === 0) tips.push("Primero toca andar bien sin muletas ni cojera. Es el primer objetivo, y el resto se construye encima.");
+  if (a.level === 1) tips.push("Andar ya lo tienes. Ahora lo que te falta es fuerza: cuando la sentadilla a una pierna te salga limpia, estarás mucho más cerca.");
+  if (a.level === 2) tips.push("Estás cerca. El siguiente paso es saltar a la pata coja sin dolor y sin que se hinche la rodilla después.");
+  if (a.injury === "lca") tips.push("Ojo: volver a correr no es volver a jugar. Los cambios de dirección y el partido llegan más tarde, normalmente a partir de los 9 meses.");
+  if (a.injury === "menisco" && a.type === 1) tips.push("Con un menisco cosido hay que respetar los plazos de tu cirujano. La sutura necesita tiempo para cicatrizar aunque ya no te duela.");
+  if (a.injury === "cartilago") tips.push("El cartílago se adapta despacio. Al principio, mejor terreno blando, poco tiempo y días de descanso entre salidas.");
   if (a.rehab > 1.2) tips.push("Si empiezas a hacer ejercicios guiados, lo normal es que esto se acorte. Esperar a que se cure solo suele alargarlo.");
   else if (a.rehab > 1) tips.push("Hacerlo por tu cuenta está bien. Con un plan adaptado a ti suele ir más rápido y con menos recaídas.");
-  if (a.injury === "lca") tips.push("Con el LCA, volver a correr no es lo mismo que volver a jugar. El partido llega más tarde, normalmente a partir de los 9 meses.");
 
   app.innerHTML = `
     <section class="result">
       <div class="big">
         <span class="label">${ready ? "Tu estimación" : "Te quedan más o menos"}</span>
-        <span class="weeks">${ready ? `0–${max}` : `${min}–${max}`} <span>semanas</span></span>
+        <span class="weeks">${min}–${max} <span>semanas</span></span>
         <span class="date">${ready ? "Puedes empezar a probar ya, poco a poco." : `Si todo va bien, sobre el ${esc(when)}.`}</span>
       </div>
       ${tips.map(t => `<p class="note">${esc(t)}</p>`).join("")}
 
       <h2>Los 3 pasos antes de correr</h2>
       <ol class="steps">
-        <li><span class="n">01</span><div><b>Andar rápido 30 minutos</b><p>Sin dolor ni durante ni al día siguiente.</p></div></li>
-        <li><span class="n">02</span><div><b>Saltar a la pata coja</b><p>10 saltos seguidos con la pierna lesionada, sin dolor.</p></div></li>
-        <li><span class="n">03</span><div><b>Correr y andar</b><p>Empieza con 1 minuto corriendo y 1 andando, 10 veces. Si al día siguiente estás bien, vas subiendo.</p></div></li>
+        <li><span class="n">01</span><div><b>Rodilla tranquila</b><p>Se estira del todo, no se hincha y andas 30 minutos rápido sin dolor.</p></div></li>
+        <li><span class="n">02</span><div><b>Fuerza en una pierna</b><p>Sentadillas a una pierna y 10 saltos a la pata coja sin dolor, y que al día siguiente siga sin hincharse.</p></div></li>
+        <li><span class="n">03</span><div><b>Correr y andar</b><p>Empieza con 1 minuto corriendo y 1 andando, 10 veces. Si al día siguiente la rodilla está bien, vas subiendo.</p></div></li>
       </ol>
 
-      <div class="alert"><b>Para y consulta</b> si se te hincha, te duele más cada día o no puedes apoyar el pie.</div>
+      <div class="alert"><b>Para y consulta</b> si la rodilla se hincha, se te bloquea, notas que "se te va" o te duele más cada día.</div>
 
       <div class="cta">
         <a class="btn primary" href="https://ig.me/m/carloscristobalfisio" target="_blank" rel="noopener">Hablemos de tu recuperación →</a>
         <a class="btn ghost" href="https://carloscristobalfisioterapia.com" target="_blank" rel="noopener">Valoración gratuita online</a>
         <button class="btn ghost" id="restart">Volver a calcular</button>
       </div>
-      <p class="fine">Esto es una estimación orientativa, no un diagnóstico. Cada lesión es distinta: para un plan hecho para ti, escríbeme por Instagram a @carloscristobalfisio.</p>
+      <p class="fine">Esto es una estimación orientativa, no un diagnóstico.${operated ? " Si te han operado, manda lo que diga tu cirujano." : ""} Cada rodilla es distinta: para un plan hecho para ti, escríbeme por Instagram a @carloscristobalfisio.</p>
     </section>`;
   document.getElementById("restart").addEventListener("click", () => {
     Object.keys(answers).forEach(k => delete answers[k]); step = 0; render();
