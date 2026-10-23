@@ -128,22 +128,21 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 
 <script>
 // Cada tipo indica las semanas mínimas tras la operación (0 = sin mínimo)
-// y si la vuelta a correr pasa por descarga progresiva (hidroterapia y Alter-G)
 const INJURIES = {
   lca: { name: "LCA", hint: "Ligamento cruzado anterior operado",
-    types: [{ t: "Plastia de LCA", weeks: 12, unload: true }],
+    types: [{ t: "Plastia de LCA", weeks: 12 }],
     note: "Volver a correr no es volver a jugar. Los cambios de dirección y el partido tienen sus propios criterios, que vienen después." },
   menisco: { name: "Menisco", hint: "Recortado, cosido o sin operar", q: "¿Qué te hicieron en el menisco?",
     types: [
-      { t: "Me quitaron un trozo", s: "Meniscectomía", weeks: 0, unload: false },
-      { t: "Me lo cosieron", s: "Sutura de menisco", weeks: 12, unload: true },
-      { t: "No me operaron", s: "Tratamiento sin cirugía", weeks: 0, unload: false }],
+      { t: "Me quitaron un trozo", s: "Meniscectomía", weeks: 0 },
+      { t: "Me lo cosieron", s: "Sutura de menisco", weeks: 12 },
+      { t: "No me operaron", s: "Tratamiento sin cirugía", weeks: 0 }],
     note: "En el menisco, la clave es que la rodilla no reaccione: si después de correr se hincha o duele más a la mañana siguiente, toca bajar la carga." },
   cartilago: { name: "Cartílago", hint: "Condropatía, microfracturas o injerto", q: "¿Qué te hicieron en el cartílago?",
     types: [
-      { t: "No me operaron", s: "Condropatía o lesión condral", weeks: 0, unload: false },
-      { t: "Me hicieron microfracturas", s: "Estimulación de médula ósea", weeks: 16, unload: true },
-      { t: "Me pusieron un injerto de cartílago", s: "Mosaicoplastia, implante de condrocitos…", weeks: 24, unload: true }],
+      { t: "No me operaron", s: "Condropatía o lesión condral", weeks: 0 },
+      { t: "Me hicieron microfracturas", s: "Estimulación de médula ósea", weeks: 16 },
+      { t: "Me pusieron un injerto de cartílago", s: "Mosaicoplastia, implante de condrocitos…", weeks: 24 }],
     note: "El cartílago se adapta despacio a la carga. Al empezar a correr, mejor terreno blando y días de descanso entre salidas." }
 };
 const typeOf = a => a.injury === "lca" ? INJURIES.lca.types[0] : INJURIES[a.injury]?.types[a.type];
@@ -165,17 +164,7 @@ const CRITERIA = [
     help: "Dolor 0 sobre 10 mientras los haces, y a la mañana siguiente la rodilla no duele más ni está más hinchada.",
     options: [{ v: true, t: "Sí, 0 de dolor y al día siguiente igual" }, { v: false, t: "No, me duele o al día siguiente está peor" }],
     work: "Ajusta la carga de los ejercicios de carrera hasta que no duelan nada y la rodilla amanezca igual." },
-  { id: "hidro", unloadOnly: true, label: "Programa de carrera en hidroterapia completado (10 km/h × 15 min al 30% del peso corporal)",
-    q: "¿Has completado el programa de carrera en piscina?",
-    help: "Correr en el agua a 10 km/h durante 15 minutos con el 30% de tu peso corporal.",
-    options: [{ v: true, t: "Sí, completado" }, { v: false, t: "No, todavía no" }],
-    work: "Completa el programa de hidroterapia hasta correr a 10 km/h durante 15 minutos al 30% de tu peso." },
-  { id: "alterg", unloadOnly: true, label: "Programa de carrera en Alter-G completado (del 50 al 90% del peso corporal, 10 km/h × 15 min)",
-    q: "¿Has completado el programa en cinta Alter-G?",
-    help: "Después de la piscina: cinta antigravedad pasando del 50 al 90% de tu peso, a 10 km/h durante 15 minutos.",
-    options: [{ v: true, t: "Sí, completado" }, { v: false, t: "No, todavía no" }],
-    work: "Después de la piscina, completa el programa en Alter-G subiendo del 50 al 90% de tu peso a 10 km/h durante 15 minutos." },
-  { id: "caminata", label: "Marcha normal y caminata rápida de 30 min sin síntomas", noUnload: true,
+  { id: "caminata", label: "Marcha normal y caminata rápida de 30 min sin síntomas", notFor: ["lca"],
     q: "¿Andas 30 minutos rápido sin cojear ni dolor?",
     help: "Andando normal, sin cojear, y que la rodilla no se hinche ni duela más después ni al día siguiente.",
     options: [{ v: true, t: "Sí, sin problemas" }, { v: false, t: "No todavía" }],
@@ -201,8 +190,7 @@ const CRITERIA = [
 ];
 
 function criteriaFor(a) {
-  const unload = typeOf(a)?.unload;
-  return CRITERIA.filter(c => unload ? !c.noUnload : !c.unloadOnly);
+  return CRITERIA.filter(c => !c.notFor?.includes(a.injury));
 }
 
 function questions(a) {
