@@ -76,9 +76,6 @@
     letter-spacing: -0.03em; margin: 18px 0 16px;
   }
   h1 em { font-style: italic; font-weight: 300; }
-  #rotWord { display: inline-block; transition: opacity .35s ease, transform .35s ease; }
-  #rotWord.out { opacity: 0; transform: translateY(8px); }
-  @media (prefers-reduced-motion: reduce) { #rotWord { transition: none; } }
   .hero-cta { margin-top: 26px; display: inline-flex; text-decoration: none; }
   .lead { color: var(--muted); font-size: 17px; max-width: 560px; margin: 0; }
   .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 22px; font-size: 14px; color: var(--muted); }
@@ -262,7 +259,7 @@
 <main>
   <section class="hero">
     <span class="badge">Test gratuito · 2 minutos</span>
-    <h1>¿Cuántas semanas te faltan para volver a <em id="rotWord">correr?</em></h1>
+    <h1>¿Cuántas semanas te faltan para volver a <em>correr?</em></h1>
     <p class="lead">Dime qué le pasa a tu rodilla y te digo en qué fase estás, qué te falta y en qué fecha puedes estar de vuelta. Con tu hoja de ruta semana a semana.</p>
     <a class="btn hero-cta" href="#quiz">Calcular mi vuelta →</a>
     <div class="hero-meta">
@@ -1357,18 +1354,6 @@ themeBtn.addEventListener("click", () => {
   paintThemeBtn();
 });
 paintThemeBtn();
-
-/* ─── Palabra que rota en el título ─────────────────────────────── */
-(() => {
-  const el = $("rotWord");
-  const words = ["correr?", "jugar?", "entrenar?", "competir?", "vivir sin dolor?"];
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  let i = 0;
-  setInterval(() => {
-    el.classList.add("out");
-    setTimeout(() => { i = (i + 1) % words.length; el.textContent = words[i]; el.classList.remove("out"); }, 350);
-  }, 2200);
-})();
 
 syncOptions();
 show(0);
