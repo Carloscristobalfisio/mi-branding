@@ -95,17 +95,6 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 .btn.primary { background: var(--cta); color: var(--cta-ink); }
 .btn.ghost { background: transparent; color: var(--ink); }
 .btn:focus-visible { outline: 3px solid var(--olive); outline-offset: 2px; }
-.sym { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.sym label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; min-width: 0; }
-.sym input { font: inherit; font-size: 28px; font-weight: 300; font-variant-numeric: tabular-nums; width: 100%;
-  padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
-.sym input:focus-visible { outline: 3px solid var(--olive); outline-offset: 1px; }
-.sym.one { grid-template-columns: 1fr; max-width: 240px; }
-.sym label small { font-weight: 400; color: var(--muted); }
-.symout { margin: 0; color: var(--muted); font-size: 15px; }
-.symout.pass { color: var(--olive); font-weight: 600; }
-.symout.fail { color: var(--warn); font-weight: 600; }
-.btn:disabled { opacity: .35; cursor: not-allowed; }
 .fine { font-size: 12px; color: var(--muted); margin: 0; }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -147,46 +136,47 @@ const INJURIES = {
 };
 const typeOf = a => a.injury === "lca" ? INJURIES.lca.types[0] : INJURIES[a.injury]?.types[a.type];
 
-// Criterios para volver a correr: hay que cumplirlos todos
+// Criterios para volver a correr, en palabras que entiende cualquiera: hay que cumplirlos todos
 const CRITERIA = [
-  { id: "derrame", label: "Sin derrame o solo trazas",
+  { id: "derrame", label: "Rodilla sin hinchar",
     q: "¿Tu rodilla está sin hinchar?",
-    help: "Sin derrame o solo trazas en el stroke test. Compárala con la otra.",
-    options: [{ v: true, t: "Sí, sin derrame o solo trazas" }, { v: false, t: "No, todavía hay derrame" }],
-    work: "La rodilla tiene que estar tranquila antes de correr. Si se hincha después de entrenar, hay que ajustar la carga." },
-  { id: "movilidad", label: "Extensión completa y flexión de 135°",
-    q: "¿Estiras la rodilla del todo y la doblas hasta 135°?",
-    help: "Estirada: igual que la otra. Doblada a 135°: el talón casi toca el culo. Si tu fisio te lo ha medido, usa ese dato.",
-    options: [{ v: true, t: "Sí, las dos cosas" }, { v: false, t: "No, me falta una o las dos" }],
-    work: "Recupera la extensión completa y la flexión hasta 135°. Trabájalas a diario." },
-  { id: "dolor", label: "Dolor 0/10 en los ejercicios de carrera y sin cambios a la mañana siguiente",
-    q: "¿Haces los ejercicios de carrera sin nada de dolor?",
-    help: "Dolor 0 sobre 10 mientras los haces, y a la mañana siguiente la rodilla no duele más ni está más hinchada.",
-    options: [{ v: true, t: "Sí, 0 de dolor y al día siguiente igual" }, { v: false, t: "No, me duele o al día siguiente está peor" }],
-    work: "Ajusta la carga de los ejercicios de carrera hasta que no duelan nada y la rodilla amanezca igual." },
-  { id: "caminata", label: "Marcha normal y caminata rápida de 30 min sin síntomas", notFor: ["lca"],
+    help: "Ponla al lado de la otra: tienen que verse iguales.",
+    options: [{ v: true, t: "Sí, se ven iguales" }, { v: false, t: "No, está más hinchada" }],
+    work: "Si se te hincha después de entrenar, te has pasado. Baja un poco lo que haces hasta que deje de hincharse." },
+  { id: "movilidad", label: "Se estira y se dobla como la otra",
+    q: "¿Estiras y doblas la rodilla igual que la otra?",
+    help: "Estirada del todo, y doblada hasta que el talón casi toca el culo.",
+    options: [{ v: true, t: "Sí, igual que la otra" }, { v: false, t: "No, se queda corta" }],
+    work: "Trabaja cada día estirar la rodilla del todo y doblarla hasta que el talón casi toque el culo." },
+  { id: "dolor", label: "Sin dolor al hacer ejercicios de correr",
+    q: "¿Haces saltitos y ejercicios de correr sin nada de dolor?",
+    help: "Y que a la mañana siguiente no te duela más ni esté más hinchada.",
+    options: [{ v: true, t: "Sí, nada de dolor" }, { v: false, t: "No, me duele algo" }],
+    work: "Haz los ejercicios más suaves hasta que no te duelan nada y la rodilla amanezca igual." },
+  { id: "caminata", label: "Andar 30 minutos rápido sin cojear", notFor: ["lca"],
     q: "¿Andas 30 minutos rápido sin cojear ni dolor?",
-    help: "Andando normal, sin cojear, y que la rodilla no se hinche ni duela más después ni al día siguiente.",
+    help: "Y que al día siguiente la rodilla siga bien.",
     options: [{ v: true, t: "Sí, sin problemas" }, { v: false, t: "No todavía" }],
     work: "Sube poco a poco: 10, 15, 20 minutos… Si al día siguiente la rodilla está bien, añades 5 minutos más." },
-  { id: "pogo", label: "30 pogos a una pierna con buena técnica (talón sin tocar el suelo, rodilla extendida)",
-    q: "¿Haces 30 pogos seguidos a una pierna con buena técnica?",
-    help: "Saltitos rápidos con la pierna lesionada botando sobre la punta: el talón no toca el suelo y la rodilla va extendida.",
-    options: [{ v: true, t: "Sí, 30 con buena técnica" }, { v: false, t: "No, menos o se me va la técnica" }],
-    work: "Trabaja los pogos: primero a dos piernas, luego a una. Talón arriba, rodilla extendida, y sube hasta 30 seguidos." },
-  { id: "pelvis", label: "Pelvis neutra en el plano frontal en el apoyo medio",
-    q: "Al correr, ¿tu cadera se mantiene recta cuando apoyas la pierna lesionada?",
-    help: "Que no se te caiga la cadera del otro lado. Lo mejor es que te graben de frente en vídeo.",
-    options: [{ v: true, t: "Sí, se mantiene recta" }, { v: false, t: "No, se me cae hacia un lado" }, { v: false, t: "No lo sé", s: "Grábate de frente o que te lo mire tu fisio" }],
-    work: "Fuerza de glúteo medio y control de la pelvis al apoyar a una pierna. Grábate de frente para comprobarlo." },
-  { id: "lsi", label: "Fuerza de cuádriceps LSI >70%", kind: "sym", min: 70, unit: "kg o N",
-    q: "Fuerza de cuádriceps medida con dinamómetro",
-    help: "Escribe la fuerza de cada pierna. Calculamos el índice de simetría (LSI).",
-    work: "Fuerza de cuádriceps hasta que la pierna lesionada supere el 70% de la sana." },
-  { id: "ikdc", label: "IKDC >64%", kind: "score", min: 64,
-    q: "¿Qué puntuación tienes en el cuestionario IKDC?",
-    help: "Es el cuestionario sobre cómo notas tu rodilla. La puntuación va de 0 a 100.",
-    work: "Rellena el cuestionario IKDC: tiene que salirte por encima de 64." }
+  { id: "pogo", label: "30 saltitos seguidos a la pata coja",
+    q: "¿Das 30 saltitos seguidos a la pata coja con la pierna lesionada?",
+    help: "De puntillas, sin que el talón toque el suelo y con la rodilla casi estirada.",
+    options: [{ v: true, t: "Sí, los 30" }, { v: false, t: "No, menos o me cuesta" }],
+    work: "Empieza dando saltitos con los dos pies, luego pasa a uno solo. Sube hasta 30 seguidos." },
+  { id: "pelvis", label: "Cadera recta al apoyarte en una pierna",
+    q: "Ponte a la pata coja delante de un espejo. ¿Tu cadera se queda recta?",
+    help: "Con la pierna lesionada en el suelo. La cadera no se tiene que caer hacia un lado.",
+    options: [{ v: true, t: "Sí, se queda recta" }, { v: false, t: "No, se cae hacia un lado" }],
+    work: "Fortalece el glúteo: puente a una pierna y aguantar a la pata coja delante del espejo con la cadera recta." },
+  { id: "fuerza", label: "Fuerza de la pierna parecida a la otra",
+    q: "¿Tu pierna lesionada tiene casi la misma fuerza que la otra?",
+    help: "Prueba: levántate de una silla con una sola pierna, todas las veces que puedas. Si con la sana haces 10, con la lesionada tienes que hacer 7 o más.",
+    options: [{ v: true, t: "Sí, 7 de cada 10 o más" }, { v: false, t: "No, me salen menos" }],
+    work: "Trabaja la fuerza de la pierna: sentadillas a una pierna sentándote en una silla, cada vez más repeticiones." },
+  { id: "sensacion", label: "Te sientes bien con tu rodilla",
+    q: "¿Cómo notas tu rodilla en el día a día?",
+    options: [{ v: true, t: "Bien, casi ni me acuerdo de ella" }, { v: false, t: "Regular, la noto a menudo" }, { v: false, t: "Mal, me limita bastante" }],
+    work: "Si la rodilla todavía te limita en el día a día, hay que seguir trabajando antes de correr." }
 ];
 
 function criteriaFor(a) {
@@ -200,7 +190,7 @@ function questions(a) {
   if (a.injury !== "lca") list.push({ id: "type", text: INJURIES[a.injury].q,
     options: INJURIES[a.injury].types.map((x, i) => ({ v: i, t: x.t, s: x.s })) });
   const t = typeOf(a);
-  if (t?.weeks) list.push({ id: "weeks", text: `¿Han pasado ${t.weeks} semanas o más desde la operación?`,
+  if (t?.weeks) list.push({ id: "weeks", text: `¿Te operaron hace ${t.weeks} semanas o más?`,
     options: [{ v: true, t: "Sí" }, { v: false, t: "No, todavía no" }] });
   return list.concat(criteriaFor(a).map(c => ({ ...c, text: c.q })));
 }
@@ -251,51 +241,6 @@ function renderChoice(q, total) {
   bindBack();
 }
 
-// Pantalla numérica: "sym" compara pierna sana y lesionada; "score" es una puntuación de 0 a 100
-function renderNumber(q, total) {
-  const prev = answers[q.id + "_raw"] || {};
-  const field = (key, label, ph) => `<label for="${q.id}-${key}">${label}<input id="${q.id}-${key}" type="number" inputmode="decimal" min="0" placeholder="${ph}" value="${prev[key] ?? ""}"></label>`;
-  app.innerHTML = `<section class="step">${head(q)}
-      <div class="sym${q.kind === "score" ? " one" : ""}">
-        ${q.kind === "sym"
-          ? field("sana", `Pierna sana <small>(${q.unit})</small>`, "Ej: 40") + field("les", `Pierna lesionada <small>(${q.unit})</small>`, "Ej: 30")
-          : field("score", "Puntuación IKDC <small>(0–100)</small>", "Ej: 70")}
-      </div>
-      <p class="symout" id="${q.id}-out"></p>
-      <div class="cta">
-        <button class="btn primary" id="${q.id}-go" disabled>Siguiente</button>
-        <button class="btn ghost" id="${q.id}-skip">No lo he medido</button>
-      </div>${nav(total)}</section>`;
-  const inputs = [...app.querySelectorAll(".sym input")];
-  const out = document.getElementById(q.id + "-out"), go = document.getElementById(q.id + "-go");
-  const read = () => {
-    const raw = Object.fromEntries(inputs.map(i => [i.id.slice(q.id.length + 1), i.value]));
-    if (inputs.some(i => i.value === "")) return { raw };
-    const value = q.kind === "sym" ? (+raw.les / +raw.sana) * 100 : +raw.score;
-    if (!isFinite(value) || +raw.sana === 0 || value < 0) return { raw };
-    return { raw, value, pass: value > q.min };
-  };
-  const update = () => {
-    const r = read();
-    go.disabled = r.value == null;
-    if (r.value == null) { out.textContent = q.kind === "sym" ? "Escribe las dos cifras." : "Escribe tu puntuación."; out.className = "symout"; return; }
-    const shown = Math.round(r.value);
-    out.textContent = (q.kind === "sym" ? `Tu LSI es del ${shown}%. ` : `Tu IKDC es ${shown}. `)
-      + (r.pass ? `Cumples (>${q.min}${q.kind === "sym" ? "%" : ""}).` : `Necesitas más de ${q.min}${q.kind === "sym" ? "%" : ""}.`);
-    out.className = "symout " + (r.pass ? "pass" : "fail");
-  };
-  inputs.forEach(i => i.addEventListener("input", update)); update();
-  go.addEventListener("click", () => {
-    const r = read();
-    answers[q.id + "_raw"] = r.raw; answers[q.id + "_val"] = Math.round(r.value); answers[q.id] = r.pass;
-    next();
-  });
-  document.getElementById(q.id + "-skip").addEventListener("click", () => {
-    delete answers[q.id + "_raw"]; answers[q.id + "_val"] = null; answers[q.id] = false; next();
-  });
-  bindBack();
-}
-
 function assess(a) {
   const list = criteriaFor(a);
   const met = list.filter(c => a[c.id]).length;
@@ -305,19 +250,15 @@ function assess(a) {
 }
 
 function detail(c) {
-  const ok = answers[c.id] ? "Conseguido" : "Pendiente";
-  if (!c.kind) return ok;
-  const v = answers[c.id + "_val"];
-  return v == null ? "Sin medir" : `${c.kind === "sym" ? v + "%" : v} · ${ok}`;
+  return answers[c.id] ? "Conseguido" : "Pendiente";
 }
 
 function renderResult() {
   const { list, met, pending, tooEarly, ready } = assess(answers);
   let goal = "";
   if (pending) {
-    const unmeasured = pending.kind && answers[pending.id + "_val"] == null;
     goal = `<div class="goal"><span class="label">Tu siguiente objetivo</span><b>${esc(pending.label)}</b>
-      <p>${esc(unmeasured ? "Todavía no lo has medido. Pídeselo a tu fisio para saber dónde estás." : pending.work)}</p></div>`;
+      <p>${esc(pending.work)}</p></div>`;
   }
 
   app.innerHTML = `
@@ -358,7 +299,7 @@ function render() {
   const qs = questions(answers);
   paintProgress(qs.length);
   if (step >= qs.length) renderResult();
-  else (qs[step].kind ? renderNumber : renderChoice)(qs[step], qs.length);
+  else renderChoice(qs[step], qs.length);
   window.scrollTo({ top: 0 });
 }
 render();
