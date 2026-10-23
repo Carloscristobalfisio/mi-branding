@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Test para saber si tu rodilla está lista para volver a correr tras una lesión de LCA, menisco o cartílago.">
+<title>¿Listo para volver a correr?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,300..500&display=swap">
+<style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<style>
+/* Layout: una columna estrecha, una pregunta por pantalla, botones grandes para el pulgar */
+:root {
+  --bg: #FAFAF8; --card: #FFFFFF; --ink: #1A1A1A; --muted: #6B6B6B;
+  --line: #E8E8E4; --sage: #C8E6C3; --olive: #5A7A52; --cta: #0A0A0A; --cta-ink: #FFFFFF;
+  --warn: #B4433F; --num: #D6D6D0;
+  --font: "DM Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0A0A0A; --card: #141413; --ink: #F2F2EE; --muted: #A3A39C;
+  --line: #2A2A27; --sage: #2F3F2C; --olive: #B5D6AF; --cta: #F2F2EE; --cta-ink: #0A0A0A;
+  --warn: #E58A86; --num: #34342F; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0A0A0A; --card: #141413; --ink: #F2F2EE; --muted: #A3A39C;
+  --line: #2A2A27; --sage: #2F3F2C; --olive: #B5D6AF; --cta: #F2F2EE; --cta-ink: #0A0A0A;
+  --warn: #E58A86; --num: #34342F; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 520px; margin: 0 auto; padding-block: 32px 56px; display: flex; flex-direction: column; gap: 28px; }
+
+.brand { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+.brand b { color: var(--ink); font-weight: 600; }
+.badge { display: inline-block; background: var(--sage); color: var(--olive); font-size: 11px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+
+h1 { font-size: clamp(32px, 8vw, 44px); font-weight: 300; line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h1 em { font-weight: 400; }
+.lead { color: var(--muted); margin: 10px 0 0; }
+
+.progress { display: flex; gap: 6px; }
+.progress span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); transition: background .25s; }
+.progress span.on { background: var(--ink); }
+
+.step { display: flex; flex-direction: column; gap: 16px; }
+.qhead { display: flex; align-items: baseline; gap: 14px; }
+.qnum { font-size: 48px; font-weight: 200; color: var(--num); line-height: 1; font-variant-numeric: tabular-nums; }
+.qtext { font-size: 22px; font-weight: 600; line-height: 1.25; margin: 0; text-wrap: balance; }
+.qhelp { color: var(--muted); font-size: 14px; margin: -6px 0 0; }
+
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { width: 100%; text-align: left; font: inherit; color: var(--ink); background: var(--card); border: 1.5px solid var(--line);
+  border-radius: 14px; padding: 14px 16px; cursor: pointer; display: flex; flex-direction: column; gap: 2px;
+  transition: border-color .15s, background .15s; }
+.opt:hover { border-color: var(--olive); }
+.opt:focus-visible { outline: 3px solid var(--olive); outline-offset: 2px; }
+.opt.sel { border-color: var(--ink); background: var(--sage); }
+.opt strong { font-weight: 600; font-size: 16px; }
+.opt small { color: var(--muted); font-size: 14px; }
+.opt.sel small { color: var(--ink); }
+
+.nav { display: flex; justify-content: space-between; align-items: center; }
+.back { background: none; border: 0; font: inherit; color: var(--muted); cursor: pointer; padding: 8px 0; }
+.back:hover { color: var(--ink); }
+.back:focus-visible { outline: 2px solid var(--olive); outline-offset: 2px; }
+
+/* Resultado */
+.result { display: flex; flex-direction: column; gap: 24px; }
+.big { background: var(--cta); color: var(--cta-ink); border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; gap: 6px; }
+.big .label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; font-weight: 600; }
+.big .weeks { font-size: clamp(52px, 16vw, 76px); font-weight: 300; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.big .weeks span { font-size: .38em; font-weight: 400; letter-spacing: 0; }
+.big .date { opacity: .8; }
+.note { margin: 0; }
+.big .phase { font-size: clamp(30px, 8vw, 40px); font-weight: 300; line-height: 1.1; text-wrap: balance; }
+.meter { display: flex; gap: 6px; margin: 10px 0 2px; }
+.meter i { flex: 1; height: 8px; border-radius: 4px; background: currentColor; opacity: .2; }
+.meter i.ok { opacity: 1; }
+.goal { background: var(--sage); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 4px; }
+.goal .label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; color: var(--olive); }
+.goal b { font-size: 18px; }
+.goal p { margin: 0; }
+.checks li.ok .n { color: var(--olive); }
+.checks li.ko .n { color: var(--warn); }
+.checks li.ko b { color: var(--muted); font-weight: 500; }
+
+h2 { font-size: 20px; font-weight: 600; margin: 0; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.steps li { display: grid; grid-template-columns: 44px 1fr; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); }
+.steps li:last-child { border-bottom: 1px solid var(--line); }
+.steps .n { font-size: 26px; font-weight: 200; color: var(--muted); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.steps b { display: block; font-weight: 600; }
+.steps p { margin: 2px 0 0; color: var(--muted); font-size: 14px; min-width: 0; }
+.alert { border: 1.5px solid var(--warn); border-radius: 14px; padding: 14px 16px; font-size: 14px; }
+.alert b { color: var(--warn); }
+.cta { display: flex; flex-direction: column; gap: 10px; }
+.btn { display: block; text-align: center; text-decoration: none; font: inherit; font-weight: 600; border-radius: 999px;
+  padding: 15px 20px; cursor: pointer; border: 1.5px solid var(--cta); }
+.btn.primary { background: var(--cta); color: var(--cta-ink); }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn:focus-visible { outline: 3px solid var(--olive); outline-offset: 2px; }
+.fine { font-size: 12px; color: var(--muted); margin: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .step, .result { animation: in .3s ease-out; }
+  @keyframes in { from { transform: translateY(6px); opacity: .4; } to { transform: none; opacity: 1; } }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><span><b>Carlos Cristóbal</b> · Fisioterapia</span><span class="badge">Rodilla</span></div>
+
+  <header>
+    <h1>¿Puedo volver a <em>correr?</em></h1>
+    <p class="lead">Para lesiones de rodilla: LCA, menisco y cartílago. Vuelves a correr cuando tu rodilla cumple los criterios.</p>
+  </header>
+
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <main id="app" aria-live="polite"></main>
+</div>
+
+<script>
+// Cada tipo indica las semanas mínimas tras la operación (0 = sin mínimo)
+const INJURIES = {
+  lca: { name: "LCA", hint: "Ligamento cruzado anterior operado",
+    types: [{ t: "Plastia de LCA", weeks: 12 }],
+    note: "Volver a correr no es volver a jugar. Los cambios de dirección y el partido tienen sus propios criterios, que vienen después." },
+  menisco: { name: "Menisco", hint: "Recortado, cosido o sin operar", q: "¿Qué te hicieron en el menisco?",
+    types: [
+      { t: "Me quitaron un trozo", s: "Meniscectomía", weeks: 0 },
+      { t: "Me lo cosieron", s: "Sutura de menisco", weeks: 12 },
+      { t: "No me operaron", s: "Tratamiento sin cirugía", weeks: 0 }],
+    note: "En el menisco, la clave es que la rodilla no reaccione: si después de correr se hincha o duele más a la mañana siguiente, toca bajar la carga." },
+  cartilago: { name: "Cartílago", hint: "Condropatía, microfracturas o injerto", q: "¿Qué te hicieron en el cartílago?",
+    types: [
+      { t: "No me operaron", s: "Condropatía o lesión condral", weeks: 0 },
+      { t: "Me hicieron microfracturas", s: "Estimulación de médula ósea", weeks: 16 },
+      { t: "Me pusieron un injerto de cartílago", s: "Mosaicoplastia, implante de condrocitos…", weeks: 24 }],
+    note: "El cartílago se adapta despacio a la carga. Al empezar a correr, mejor terreno blando y días de descanso entre salidas." }
+};
+const typeOf = a => a.injury === "lca" ? INJURIES.lca.types[0] : INJURIES[a.injury]?.types[a.type];
+
+// Criterios para volver a correr, en palabras que entiende cualquiera: hay que cumplirlos todos
+const CRITERIA = [
+  { id: "derrame", label: "Rodilla sin hinchar",
+    q: "¿Tu rodilla está sin hinchar?",
+    help: "Ponla al lado de la otra: tienen que verse iguales.",
+    options: [{ v: true, t: "Sí, se ven iguales" }, { v: false, t: "No, está más hinchada" }],
+    work: "Si se te hincha después de entrenar, te has pasado. Baja un poco lo que haces hasta que deje de hincharse." },
+  { id: "movilidad", label: "Se estira y se dobla como la otra",
+    q: "¿Estiras y doblas la rodilla igual que la otra?",
+    help: "Estirada del todo, y doblada hasta que el talón casi toca el culo.",
+    options: [{ v: true, t: "Sí, igual que la otra" }, { v: false, t: "No, se queda corta" }],
+    work: "Trabaja cada día estirar la rodilla del todo y doblarla hasta que el talón casi toque el culo." },
+  { id: "dolor", label: "Sin dolor al hacer ejercicios de correr",
+    q: "¿Haces saltitos y ejercicios de correr sin nada de dolor?",
+    help: "Y que a la mañana siguiente no te duela más ni esté más hinchada.",
+    options: [{ v: true, t: "Sí, nada de dolor" }, { v: false, t: "No, me duele algo" }],
+    work: "Haz los ejercicios más suaves hasta que no te duelan nada y la rodilla amanezca igual." },
+  { id: "caminata", label: "Andar 30 minutos rápido sin cojear", notFor: ["lca"],
+    q: "¿Andas 30 minutos rápido sin cojear ni dolor?",
+    help: "Y que al día siguiente la rodilla siga bien.",
+    options: [{ v: true, t: "Sí, sin problemas" }, { v: false, t: "No todavía" }],
+    work: "Sube poco a poco: 10, 15, 20 minutos… Si al día siguiente la rodilla está bien, añades 5 minutos más." },
+  { id: "pogo", label: "30 saltitos seguidos a la pata coja",
+    q: "¿Das 30 saltitos seguidos a la pata coja con la pierna lesionada?",
+    help: "De puntillas, sin que el talón toque el suelo y con la rodilla casi estirada.",
+    options: [{ v: true, t: "Sí, los 30" }, { v: false, t: "No, menos o me cuesta" }],
+    work: "Empieza dando saltitos con los dos pies, luego pasa a uno solo. Sube hasta 30 seguidos." },
+  { id: "pelvis", label: "Cadera recta al apoyarte en una pierna",
+    q: "Ponte a la pata coja delante de un espejo. ¿Tu cadera se queda recta?",
+    help: "Con la pierna lesionada en el suelo. La cadera no se tiene que caer hacia un lado.",
+    options: [{ v: true, t: "Sí, se queda recta" }, { v: false, t: "No, se cae hacia un lado" }],
+    work: "Fortalece el glúteo: puente a una pierna y aguantar a la pata coja delante del espejo con la cadera recta." },
+  { id: "fuerza", label: "Fuerza de la pierna parecida a la otra",
+    q: "¿Tu pierna lesionada tiene casi la misma fuerza que la otra?",
+    help: "Prueba: levántate de una silla con una sola pierna, todas las veces que puedas. Si con la sana haces 10, con la lesionada tienes que hacer 7 o más.",
+    options: [{ v: true, t: "Sí, 7 de cada 10 o más" }, { v: false, t: "No, me salen menos" }],
+    work: "Trabaja la fuerza de la pierna: sentadillas a una pierna sentándote en una silla, cada vez más repeticiones." },
+  { id: "sensacion", label: "Te sientes bien con tu rodilla",
+    q: "¿Cómo notas tu rodilla en el día a día?",
+    options: [{ v: true, t: "Bien, casi ni me acuerdo de ella" }, { v: false, t: "Regular, la noto a menudo" }, { v: false, t: "Mal, me limita bastante" }],
+    work: "Si la rodilla todavía te limita en el día a día, hay que seguir trabajando antes de correr." }
+];
+
+function criteriaFor(a) {
+  return CRITERIA.filter(c => !c.notFor?.includes(a.injury));
+}
+
+function questions(a) {
+  const list = [{ id: "injury", text: "¿Qué te pasó en la rodilla?",
+    options: Object.entries(INJURIES).map(([v, i]) => ({ v, t: i.name, s: i.hint })) }];
+  if (!a.injury) return list;
+  if (a.injury !== "lca") list.push({ id: "type", text: INJURIES[a.injury].q,
+    options: INJURIES[a.injury].types.map((x, i) => ({ v: i, t: x.t, s: x.s })) });
+  const t = typeOf(a);
+  if (t?.weeks) list.push({ id: "weeks", text: `¿Te operaron hace ${t.weeks} semanas o más?`,
+    options: [{ v: true, t: "Sí" }, { v: false, t: "No, todavía no" }] });
+  return list.concat(criteriaFor(a).map(c => ({ ...c, text: c.q })));
+}
+
+let step = 0;
+const answers = {};
+const app = document.getElementById("app");
+const progress = document.getElementById("progress");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pad = n => String(n).padStart(2, "0");
+
+function paintProgress(total) {
+  progress.innerHTML = Array.from({ length: total }, (_, i) => `<span class="${i < step || step >= total ? "on" : ""}"></span>`).join("");
+}
+
+function head(q) {
+  return `<div class="qhead"><span class="qnum">${pad(step + 1)}</span><h2 class="qtext">${esc(q.text)}</h2></div>
+    ${q.help ? `<p class="qhelp">${esc(q.help)}</p>` : ""}`;
+}
+function nav(total) {
+  return `<div class="nav">${step > 0 ? `<button class="back" id="back">← Atrás</button>` : "<span></span>"}
+    <span class="fine">${step + 1} de ${total}</span></div>`;
+}
+function next() { step++; render(); }
+function bindBack() {
+  const back = document.getElementById("back");
+  if (back) back.addEventListener("click", () => { step--; render(); });
+}
+
+function renderChoice(q, total) {
+  app.innerHTML = `<section class="step">${head(q)}
+      <div class="opts" role="group">
+        ${q.options.map((o, i) => `
+          <button class="opt${answers[q.id + "_i"] === i ? " sel" : ""}" id="opt-${q.id}-${i}" data-i="${i}">
+            <strong>${esc(o.t)}</strong>${o.s ? `<small>${esc(o.s)}</small>` : ""}
+          </button>`).join("")}
+      </div>${nav(total)}</section>`;
+  app.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
+    const i = +b.dataset.i;
+    if ((q.id === "injury" || q.id === "type") && answers[q.id] !== q.options[i].v) {
+      ["type", "type_i", "weeks", "weeks_i"].filter(k => k !== q.id && k !== q.id + "_i").forEach(k => delete answers[k]);
+    }
+    answers[q.id] = q.options[i].v;
+    answers[q.id + "_i"] = i;
+    b.classList.add("sel");
+    setTimeout(next, 160);
+  }));
+  bindBack();
+}
+
+function assess(a) {
+  const list = criteriaFor(a);
+  const met = list.filter(c => a[c.id]).length;
+  const pending = list.find(c => !a[c.id]);
+  const tooEarly = !!typeOf(a)?.weeks && a.weeks === false;
+  return { list, met, pending, tooEarly, ready: !pending && !tooEarly };
+}
+
+function detail(c) {
+  return answers[c.id] ? "Conseguido" : "Pendiente";
+}
+
+function renderResult() {
+  const { list, met, pending, tooEarly, ready } = assess(answers);
+  let goal = "";
+  if (pending) {
+    goal = `<div class="goal"><span class="label">Tu siguiente objetivo</span><b>${esc(pending.label)}</b>
+      <p>${esc(pending.work)}</p></div>`;
+  }
+
+  app.innerHTML = `
+    <section class="result">
+      <div class="big">
+        <span class="label">${ready ? "Criterios cumplidos" : "Todavía no"}</span>
+        <span class="phase">${ready ? "Puedes empezar a correr" : "Todavía no toca correr"}</span>
+        <div class="meter" aria-hidden="true">${list.map(c => `<i class="${answers[c.id] ? "ok" : ""}"></i>`).join("")}</div>
+        <span class="date">Cumples ${met} de ${list.length} criterios</span>
+      </div>
+
+      ${tooEarly ? `<p class="note">Con tu operación se empieza a correr a partir de la semana ${typeOf(answers).weeks}. Mientras tanto, sigue trabajando estos criterios para llegar con todo listo.</p>` : ""}
+      ${ready ? `<p class="note">Cumples todos los criterios. Empieza a correr poco a poco y, si a la mañana siguiente la rodilla no duele más ni está más hinchada, vas subiendo.</p>` : goal}
+
+      <h2>Criterios para volver a correr</h2>
+      <ol class="steps checks">
+        ${list.map(c => `<li class="${answers[c.id] ? "ok" : "ko"}">
+          <span class="n">${answers[c.id] ? "✓" : "✗"}</span>
+          <div><b>${esc(c.label)}</b><p>${esc(detail(c))}</p></div></li>`).join("")}
+      </ol>
+      <p class="note">${esc(INJURIES[answers.injury].note)}</p>
+
+      <div class="alert"><b>Para y consulta</b> si la rodilla se hincha, se te bloquea, notas que "se te va" o te duele más cada día.</div>
+
+      <div class="cta">
+        <a class="btn primary" href="https://wa.link/aga4qa" target="_blank" rel="noopener">Hablemos de tu recuperación →</a>
+        <button class="btn ghost" id="restart">Volver a hacer el test</button>
+      </div>
+      <p class="fine">Esto es una orientación, no un diagnóstico. Cada rodilla es distinta: para un plan hecho para ti, escríbeme por WhatsApp.</p>
+    </section>`;
+  document.getElementById("restart").addEventListener("click", () => {
+    Object.keys(answers).forEach(k => delete answers[k]); step = 0; render();
+  });
+}
+
+function render() {
+  const qs = questions(answers);
+  paintProgress(qs.length);
+  if (step >= qs.length) renderResult();
+  else renderChoice(qs[step], qs.length);
+  window.scrollTo({ top: 0 });
+}
+render();
+</script>
+</body>
+</html>
