@@ -100,6 +100,8 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 .sym input { font: inherit; font-size: 28px; font-weight: 300; font-variant-numeric: tabular-nums; width: 100%;
   padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
 .sym input:focus-visible { outline: 3px solid var(--olive); outline-offset: 1px; }
+.sym.one { grid-template-columns: 1fr; max-width: 240px; }
+.sym label small { font-weight: 400; color: var(--muted); }
 .symout { margin: 0; color: var(--muted); font-size: 15px; }
 .symout.pass { color: var(--olive); font-weight: 600; }
 .symout.fail { color: var(--warn); font-weight: 600; }
@@ -125,52 +127,94 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 </div>
 
 <script>
+// Cada tipo indica las semanas mínimas tras la operación (0 = sin mínimo)
+// y si la vuelta a correr pasa por descarga progresiva (hidroterapia y Alter-G)
 const INJURIES = {
-  lca: { name: "LCA", hint: "Ligamento cruzado anterior",
+  lca: { name: "LCA", hint: "Ligamento cruzado anterior operado",
+    types: [{ t: "Plastia de LCA", weeks: 12, unload: true }],
     note: "Volver a correr no es volver a jugar. Los cambios de dirección y el partido tienen sus propios criterios, que vienen después." },
-  menisco: { name: "Menisco", hint: "Recortado, cosido o sin operar",
-    note: "Da igual si te lo recortaron, te lo cosieron o no te operaron: vuelves a correr cuando cumples los criterios." },
-  cartilago: { name: "Cartílago", hint: "Condropatía, microfracturas o injerto",
-    note: "Cuando cumplas los criterios, al principio mejor terreno blando y días de descanso entre salidas." }
+  menisco: { name: "Menisco", hint: "Recortado, cosido o sin operar", q: "¿Qué te hicieron en el menisco?",
+    types: [
+      { t: "Me quitaron un trozo", s: "Meniscectomía", weeks: 0, unload: false },
+      { t: "Me lo cosieron", s: "Sutura de menisco", weeks: 12, unload: true },
+      { t: "No me operaron", s: "Tratamiento sin cirugía", weeks: 0, unload: false }],
+    note: "En el menisco, la clave es que la rodilla no reaccione: si después de correr se hincha o duele más a la mañana siguiente, toca bajar la carga." },
+  cartilago: { name: "Cartílago", hint: "Condropatía, microfracturas o injerto", q: "¿Qué te hicieron en el cartílago?",
+    types: [
+      { t: "No me operaron", s: "Condropatía o lesión condral", weeks: 0, unload: false },
+      { t: "Me hicieron microfracturas", s: "Estimulación de médula ósea", weeks: 16, unload: true },
+      { t: "Me pusieron un injerto de cartílago", s: "Mosaicoplastia, implante de condrocitos…", weeks: 24, unload: true }],
+    note: "El cartílago se adapta despacio a la carga. Al empezar a correr, mejor terreno blando y días de descanso entre salidas." }
 };
+const typeOf = a => a.injury === "lca" ? INJURIES.lca.types[0] : INJURIES[a.injury]?.types[a.type];
 
-const LCA_MIN_WEEKS = 12;
-
-// Criterios de salida de la Fase 2: hay que cumplirlos todos para empezar a correr
+// Criterios para volver a correr: hay que cumplirlos todos
 const CRITERIA = [
-  { id: "movilidad", label: "Extensión completa (0°) y flexión de 120°",
-    q: "¿Estiras la rodilla del todo y la doblas hasta 120°?",
-    help: "Estirada: la parte de atrás de la rodilla toca el suelo, igual que la otra. Doblada a 120°: el talón llega cerca del culo. Si tu fisio te lo ha medido, usa ese dato.",
+  { id: "derrame", label: "Sin derrame o solo trazas",
+    q: "¿Tu rodilla está sin hinchar?",
+    help: "Sin derrame o solo trazas en el stroke test. Compárala con la otra.",
+    options: [{ v: true, t: "Sí, sin derrame o solo trazas" }, { v: false, t: "No, todavía hay derrame" }],
+    work: "La rodilla tiene que estar tranquila antes de correr. Si se hincha después de entrenar, hay que ajustar la carga." },
+  { id: "movilidad", label: "Extensión completa y flexión de 135°",
+    q: "¿Estiras la rodilla del todo y la doblas hasta 135°?",
+    help: "Estirada: igual que la otra. Doblada a 135°: el talón casi toca el culo. Si tu fisio te lo ha medido, usa ese dato.",
     options: [{ v: true, t: "Sí, las dos cosas" }, { v: false, t: "No, me falta una o las dos" }],
-    work: "Recupera primero la extensión completa (0°) y después la flexión hasta 120°. Trabájalas a diario." },
-  { id: "slsct", label: "Simetría ≥70% en el SLSCT", sym: true,
-    q: "Test de sentadilla a una pierna en silla (SLSCT)",
-    help: "Haz el test con cada pierna y apunta cuántas repeticiones te salen.",
-    work: "Fuerza de cuádriceps a una pierna hasta que la lesionada llegue al 70% de lo que hace la sana." },
-  { id: "olbt", label: "Simetría ≥70% en el OLBT", sym: true,
-    q: "Test de puente a una pierna (OLBT)",
-    help: "Haz el test con cada pierna y apunta cuántas repeticiones te salen.",
-    work: "Fuerza de glúteo e isquios a una pierna hasta que la lesionada llegue al 70% de lo que hace la sana." },
-  { id: "hop", label: "Capaz de decelerar un hop vertical",
-    q: "¿Saltas hacia arriba con la pierna lesionada y frenas bien al caer?",
-    help: "Caes suave, aguantas sin perder el equilibrio y la rodilla no se va hacia dentro.",
-    options: [{ v: true, t: "Sí, freno y aguanto" }, { v: false, t: "No, caigo fuerte o pierdo el equilibrio" }],
-    work: "Aprende a frenar: primero caídas a dos piernas, luego de dos a una y al final saltos a una pierna. Caídas suaves y aguantar 2 segundos." },
-  { id: "dolor", label: "Dolor y molestias en descenso, sin miedo limitante",
-    q: "¿Cómo están el dolor y el miedo?",
-    options: [
-      { v: true, t: "El dolor va a menos y no me da miedo usar la rodilla" },
-      { v: false, t: "El dolor va a menos, pero me da miedo", s: "Por ejemplo, al saltar o al cargar peso sobre ella" },
-      { v: false, t: "El dolor no baja o va a más" }],
-    work: "Si el dolor no baja o el miedo te frena, se trabaja: exposición progresiva a los gestos que te dan miedo y ajuste de la carga." }
+    work: "Recupera la extensión completa y la flexión hasta 135°. Trabájalas a diario." },
+  { id: "dolor", label: "Dolor 0/10 en los ejercicios de carrera y sin cambios a la mañana siguiente",
+    q: "¿Haces los ejercicios de carrera sin nada de dolor?",
+    help: "Dolor 0 sobre 10 mientras los haces, y a la mañana siguiente la rodilla no duele más ni está más hinchada.",
+    options: [{ v: true, t: "Sí, 0 de dolor y al día siguiente igual" }, { v: false, t: "No, me duele o al día siguiente está peor" }],
+    work: "Ajusta la carga de los ejercicios de carrera hasta que no duelan nada y la rodilla amanezca igual." },
+  { id: "hidro", unloadOnly: true, label: "Programa de carrera en hidroterapia completado (10 km/h × 15 min al 30% del peso corporal)",
+    q: "¿Has completado el programa de carrera en piscina?",
+    help: "Correr en el agua a 10 km/h durante 15 minutos con el 30% de tu peso corporal.",
+    options: [{ v: true, t: "Sí, completado" }, { v: false, t: "No, todavía no" }],
+    work: "Completa el programa de hidroterapia hasta correr a 10 km/h durante 15 minutos al 30% de tu peso." },
+  { id: "alterg", unloadOnly: true, label: "Programa de carrera en Alter-G completado (del 50 al 90% del peso corporal, 10 km/h × 15 min)",
+    q: "¿Has completado el programa en cinta Alter-G?",
+    help: "Después de la piscina: cinta antigravedad pasando del 50 al 90% de tu peso, a 10 km/h durante 15 minutos.",
+    options: [{ v: true, t: "Sí, completado" }, { v: false, t: "No, todavía no" }],
+    work: "Después de la piscina, completa el programa en Alter-G subiendo del 50 al 90% de tu peso a 10 km/h durante 15 minutos." },
+  { id: "caminata", label: "Marcha normal y caminata rápida de 30 min sin síntomas", noUnload: true,
+    q: "¿Andas 30 minutos rápido sin cojear ni dolor?",
+    help: "Andando normal, sin cojear, y que la rodilla no se hinche ni duela más después ni al día siguiente.",
+    options: [{ v: true, t: "Sí, sin problemas" }, { v: false, t: "No todavía" }],
+    work: "Sube poco a poco: 10, 15, 20 minutos… Si al día siguiente la rodilla está bien, añades 5 minutos más." },
+  { id: "pogo", label: "30 pogos a una pierna con buena técnica (talón sin tocar el suelo, rodilla extendida)",
+    q: "¿Haces 30 pogos seguidos a una pierna con buena técnica?",
+    help: "Saltitos rápidos con la pierna lesionada botando sobre la punta: el talón no toca el suelo y la rodilla va extendida.",
+    options: [{ v: true, t: "Sí, 30 con buena técnica" }, { v: false, t: "No, menos o se me va la técnica" }],
+    work: "Trabaja los pogos: primero a dos piernas, luego a una. Talón arriba, rodilla extendida, y sube hasta 30 seguidos." },
+  { id: "pelvis", label: "Pelvis neutra en el plano frontal en el apoyo medio",
+    q: "Al correr, ¿tu cadera se mantiene recta cuando apoyas la pierna lesionada?",
+    help: "Que no se te caiga la cadera del otro lado. Lo mejor es que te graben de frente en vídeo.",
+    options: [{ v: true, t: "Sí, se mantiene recta" }, { v: false, t: "No, se me cae hacia un lado" }, { v: false, t: "No lo sé", s: "Grábate de frente o que te lo mire tu fisio" }],
+    work: "Fuerza de glúteo medio y control de la pelvis al apoyar a una pierna. Grábate de frente para comprobarlo." },
+  { id: "lsi", label: "Fuerza de cuádriceps LSI >70%", kind: "sym", min: 70, unit: "kg o N",
+    q: "Fuerza de cuádriceps medida con dinamómetro",
+    help: "Escribe la fuerza de cada pierna. Calculamos el índice de simetría (LSI).",
+    work: "Fuerza de cuádriceps hasta que la pierna lesionada supere el 70% de la sana." },
+  { id: "ikdc", label: "IKDC >64%", kind: "score", min: 64,
+    q: "¿Qué puntuación tienes en el cuestionario IKDC?",
+    help: "Es el cuestionario sobre cómo notas tu rodilla. La puntuación va de 0 a 100.",
+    work: "Rellena el cuestionario IKDC: tiene que salirte por encima de 64." }
 ];
+
+function criteriaFor(a) {
+  const unload = typeOf(a)?.unload;
+  return CRITERIA.filter(c => unload ? !c.noUnload : !c.unloadOnly);
+}
 
 function questions(a) {
   const list = [{ id: "injury", text: "¿Qué te pasó en la rodilla?",
     options: Object.entries(INJURIES).map(([v, i]) => ({ v, t: i.name, s: i.hint })) }];
-  if (a.injury === "lca") list.push({ id: "weeks", text: `¿Han pasado ${LCA_MIN_WEEKS} semanas o más desde la operación?`,
+  if (!a.injury) return list;
+  if (a.injury !== "lca") list.push({ id: "type", text: INJURIES[a.injury].q,
+    options: INJURIES[a.injury].types.map((x, i) => ({ v: i, t: x.t, s: x.s })) });
+  const t = typeOf(a);
+  if (t?.weeks) list.push({ id: "weeks", text: `¿Han pasado ${t.weeks} semanas o más desde la operación?`,
     options: [{ v: true, t: "Sí" }, { v: false, t: "No, todavía no" }] });
-  return list.concat(CRITERIA.map(c => ({ id: c.id, text: c.q, help: c.help, options: c.options, sym: c.sym })));
+  return list.concat(criteriaFor(a).map(c => ({ ...c, text: c.q })));
 }
 
 let step = 0;
@@ -178,18 +222,19 @@ const answers = {};
 const app = document.getElementById("app");
 const progress = document.getElementById("progress");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pad = n => String(n).padStart(2, "0");
 
 function paintProgress(total) {
   progress.innerHTML = Array.from({ length: total }, (_, i) => `<span class="${i < step || step >= total ? "on" : ""}"></span>`).join("");
 }
 
-function head(q, total) {
-  return `<div class="qhead"><span class="qnum">0${step + 1}</span><h2 class="qtext">${esc(q.text)}</h2></div>
+function head(q) {
+  return `<div class="qhead"><span class="qnum">${pad(step + 1)}</span><h2 class="qtext">${esc(q.text)}</h2></div>
     ${q.help ? `<p class="qhelp">${esc(q.help)}</p>` : ""}`;
 }
-function nav(total, extra = "") {
+function nav(total) {
   return `<div class="nav">${step > 0 ? `<button class="back" id="back">← Atrás</button>` : "<span></span>"}
-    ${extra}<span class="fine">${step + 1} de ${total}</span></div>`;
+    <span class="fine">${step + 1} de ${total}</span></div>`;
 }
 function next() { step++; render(); }
 function bindBack() {
@@ -198,7 +243,7 @@ function bindBack() {
 }
 
 function renderChoice(q, total) {
-  app.innerHTML = `<section class="step">${head(q, total)}
+  app.innerHTML = `<section class="step">${head(q)}
       <div class="opts" role="group">
         ${q.options.map((o, i) => `
           <button class="opt${answers[q.id + "_i"] === i ? " sel" : ""}" id="opt-${q.id}-${i}" data-i="${i}">
@@ -207,7 +252,9 @@ function renderChoice(q, total) {
       </div>${nav(total)}</section>`;
   app.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
     const i = +b.dataset.i;
-    if (q.id === "injury" && answers.injury !== q.options[i].v) { delete answers.weeks; delete answers.weeks_i; }
+    if ((q.id === "injury" || q.id === "type") && answers[q.id] !== q.options[i].v) {
+      ["type", "type_i", "weeks", "weeks_i"].filter(k => k !== q.id && k !== q.id + "_i").forEach(k => delete answers[k]);
+    }
     answers[q.id] = q.options[i].v;
     answers[q.id + "_i"] = i;
     b.classList.add("sel");
@@ -216,81 +263,90 @@ function renderChoice(q, total) {
   bindBack();
 }
 
-// Pantalla de simetría: repeticiones con cada pierna y % de la lesionada respecto a la sana
-function renderSym(q, total) {
-  const prev = answers[q.id + "_reps"] || {};
-  app.innerHTML = `<section class="step">${head(q, total)}
-      <div class="sym">
-        <label for="${q.id}-sana">Pierna sana<input id="${q.id}-sana" type="number" inputmode="numeric" min="0" placeholder="Ej: 20" value="${prev.sana ?? ""}"></label>
-        <label for="${q.id}-les">Pierna lesionada<input id="${q.id}-les" type="number" inputmode="numeric" min="0" placeholder="Ej: 15" value="${prev.les ?? ""}"></label>
+// Pantalla numérica: "sym" compara pierna sana y lesionada; "score" es una puntuación de 0 a 100
+function renderNumber(q, total) {
+  const prev = answers[q.id + "_raw"] || {};
+  const field = (key, label, ph) => `<label for="${q.id}-${key}">${label}<input id="${q.id}-${key}" type="number" inputmode="decimal" min="0" placeholder="${ph}" value="${prev[key] ?? ""}"></label>`;
+  app.innerHTML = `<section class="step">${head(q)}
+      <div class="sym${q.kind === "score" ? " one" : ""}">
+        ${q.kind === "sym"
+          ? field("sana", `Pierna sana <small>(${q.unit})</small>`, "Ej: 40") + field("les", `Pierna lesionada <small>(${q.unit})</small>`, "Ej: 30")
+          : field("score", "Puntuación IKDC <small>(0–100)</small>", "Ej: 70")}
       </div>
-      <p class="symout" id="${q.id}-out">Escribe las dos cifras.</p>
+      <p class="symout" id="${q.id}-out"></p>
       <div class="cta">
         <button class="btn primary" id="${q.id}-go" disabled>Siguiente</button>
         <button class="btn ghost" id="${q.id}-skip">No lo he medido</button>
       </div>${nav(total)}</section>`;
-  const sana = document.getElementById(q.id + "-sana"), les = document.getElementById(q.id + "-les");
+  const inputs = [...app.querySelectorAll(".sym input")];
   const out = document.getElementById(q.id + "-out"), go = document.getElementById(q.id + "-go");
-  const update = () => {
-    const s = +sana.value, l = +les.value;
-    const ok = sana.value !== "" && les.value !== "" && s > 0 && l >= 0;
-    go.disabled = !ok;
-    if (!ok) { out.textContent = "Escribe las dos cifras."; out.className = "symout"; return; }
-    const pct = Math.round(l / s * 100);
-    out.textContent = `Tu pierna lesionada está al ${pct}% de la sana. ${pct >= 70 ? "Cumples (≥70%)." : "Necesitas llegar al 70%."}`;
-    out.className = "symout " + (pct >= 70 ? "pass" : "fail");
+  const read = () => {
+    const raw = Object.fromEntries(inputs.map(i => [i.id.slice(q.id.length + 1), i.value]));
+    if (inputs.some(i => i.value === "")) return { raw };
+    const value = q.kind === "sym" ? (+raw.les / +raw.sana) * 100 : +raw.score;
+    if (!isFinite(value) || +raw.sana === 0 || value < 0) return { raw };
+    return { raw, value, pass: value > q.min };
   };
-  sana.addEventListener("input", update); les.addEventListener("input", update); update();
+  const update = () => {
+    const r = read();
+    go.disabled = r.value == null;
+    if (r.value == null) { out.textContent = q.kind === "sym" ? "Escribe las dos cifras." : "Escribe tu puntuación."; out.className = "symout"; return; }
+    const shown = Math.round(r.value);
+    out.textContent = (q.kind === "sym" ? `Tu LSI es del ${shown}%. ` : `Tu IKDC es ${shown}. `)
+      + (r.pass ? `Cumples (>${q.min}${q.kind === "sym" ? "%" : ""}).` : `Necesitas más de ${q.min}${q.kind === "sym" ? "%" : ""}.`);
+    out.className = "symout " + (r.pass ? "pass" : "fail");
+  };
+  inputs.forEach(i => i.addEventListener("input", update)); update();
   go.addEventListener("click", () => {
-    const s = +sana.value, l = +les.value, pct = Math.round(l / s * 100);
-    answers[q.id + "_reps"] = { sana: s, les: l };
-    answers[q.id + "_pct"] = pct;
-    answers[q.id] = pct >= 70;
+    const r = read();
+    answers[q.id + "_raw"] = r.raw; answers[q.id + "_val"] = Math.round(r.value); answers[q.id] = r.pass;
     next();
   });
   document.getElementById(q.id + "-skip").addEventListener("click", () => {
-    delete answers[q.id + "_reps"]; answers[q.id + "_pct"] = null; answers[q.id] = false; next();
+    delete answers[q.id + "_raw"]; answers[q.id + "_val"] = null; answers[q.id] = false; next();
   });
   bindBack();
 }
 
 function assess(a) {
-  const met = CRITERIA.filter(c => a[c.id]).length;
-  const pending = CRITERIA.find(c => !a[c.id]);
-  const tooEarly = a.injury === "lca" && a.weeks === false;
-  return { met, pending, tooEarly, ready: !pending && !tooEarly };
+  const list = criteriaFor(a);
+  const met = list.filter(c => a[c.id]).length;
+  const pending = list.find(c => !a[c.id]);
+  const tooEarly = !!typeOf(a)?.weeks && a.weeks === false;
+  return { list, met, pending, tooEarly, ready: !pending && !tooEarly };
 }
 
 function detail(c) {
-  if (!c.sym) return answers[c.id] ? "Conseguido" : "Pendiente";
-  const pct = answers[c.id + "_pct"];
-  return pct == null ? "Sin medir" : `${pct}% · ${answers[c.id] ? "Conseguido" : "Pendiente"}`;
+  const ok = answers[c.id] ? "Conseguido" : "Pendiente";
+  if (!c.kind) return ok;
+  const v = answers[c.id + "_val"];
+  return v == null ? "Sin medir" : `${c.kind === "sym" ? v + "%" : v} · ${ok}`;
 }
 
 function renderResult() {
-  const { met, pending, tooEarly, ready } = assess(answers);
+  const { list, met, pending, tooEarly, ready } = assess(answers);
   let goal = "";
   if (pending) {
-    const unmeasured = pending.sym && answers[pending.id + "_pct"] == null;
+    const unmeasured = pending.kind && answers[pending.id + "_val"] == null;
     goal = `<div class="goal"><span class="label">Tu siguiente objetivo</span><b>${esc(pending.label)}</b>
-      <p>${esc(unmeasured ? "Todavía no lo has medido. Hazte el test con cada pierna para saber dónde estás." : pending.work)}</p></div>`;
+      <p>${esc(unmeasured ? "Todavía no lo has medido. Pídeselo a tu fisio para saber dónde estás." : pending.work)}</p></div>`;
   }
 
   app.innerHTML = `
     <section class="result">
       <div class="big">
-        <span class="label">${ready ? "Fase 2 superada" : "Fase 2"}</span>
+        <span class="label">${ready ? "Criterios cumplidos" : "Todavía no"}</span>
         <span class="phase">${ready ? "Puedes empezar a correr" : "Todavía no toca correr"}</span>
-        <div class="meter" aria-hidden="true">${CRITERIA.map(c => `<i class="${answers[c.id] ? "ok" : ""}"></i>`).join("")}</div>
-        <span class="date">Cumples ${met} de ${CRITERIA.length} criterios</span>
+        <div class="meter" aria-hidden="true">${list.map(c => `<i class="${answers[c.id] ? "ok" : ""}"></i>`).join("")}</div>
+        <span class="date">Cumples ${met} de ${list.length} criterios</span>
       </div>
 
-      ${tooEarly ? `<p class="note">En el LCA se empieza a correr a partir de la semana ${LCA_MIN_WEEKS} después de la operación. Mientras tanto, sigue trabajando estos criterios para llegar con todo listo.</p>` : ""}
-      ${ready ? `<p class="note">Cumples todos los criterios de salida de la Fase 2. Empieza con correr y andar: 1 minuto corriendo y 1 andando, 10 veces, en días alternos. Si al día siguiente la rodilla está bien, vas subiendo.</p>` : goal}
+      ${tooEarly ? `<p class="note">Con tu operación se empieza a correr a partir de la semana ${typeOf(answers).weeks}. Mientras tanto, sigue trabajando estos criterios para llegar con todo listo.</p>` : ""}
+      ${ready ? `<p class="note">Cumples todos los criterios. Empieza a correr poco a poco y, si a la mañana siguiente la rodilla no duele más ni está más hinchada, vas subiendo.</p>` : goal}
 
       <h2>Criterios para volver a correr</h2>
       <ol class="steps checks">
-        ${CRITERIA.map(c => `<li class="${answers[c.id] ? "ok" : "ko"}">
+        ${list.map(c => `<li class="${answers[c.id] ? "ok" : "ko"}">
           <span class="n">${answers[c.id] ? "✓" : "✗"}</span>
           <div><b>${esc(c.label)}</b><p>${esc(detail(c))}</p></div></li>`).join("")}
       </ol>
@@ -314,7 +370,7 @@ function render() {
   const qs = questions(answers);
   paintProgress(qs.length);
   if (step >= qs.length) renderResult();
-  else (qs[step].sym ? renderSym : renderChoice)(qs[step], qs.length);
+  else (qs[step].kind ? renderNumber : renderChoice)(qs[step], qs.length);
   window.scrollTo({ top: 0 });
 }
 render();
