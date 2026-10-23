@@ -1,0 +1,246 @@
+<title>¿Cuándo vuelvo a correr?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,300..500&display=swap">
+<style>
+/* Layout: una columna estrecha, una pregunta por pantalla, botones grandes para el pulgar */
+:root {
+  --bg: #FAFAF8; --card: #FFFFFF; --ink: #1A1A1A; --muted: #6B6B6B;
+  --line: #E8E8E4; --sage: #C8E6C3; --olive: #5A7A52; --cta: #0A0A0A; --cta-ink: #FFFFFF;
+  --warn: #B4433F; --num: #D6D6D0;
+  --font: "DM Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0A0A0A; --card: #141413; --ink: #F2F2EE; --muted: #A3A39C;
+  --line: #2A2A27; --sage: #2F3F2C; --olive: #B5D6AF; --cta: #F2F2EE; --cta-ink: #0A0A0A;
+  --warn: #E58A86; --num: #34342F; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0A0A0A; --card: #141413; --ink: #F2F2EE; --muted: #A3A39C;
+  --line: #2A2A27; --sage: #2F3F2C; --olive: #B5D6AF; --cta: #F2F2EE; --cta-ink: #0A0A0A;
+  --warn: #E58A86; --num: #34342F; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 520px; margin: 0 auto; padding-block: 32px 56px; display: flex; flex-direction: column; gap: 28px; }
+
+.brand { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+.brand b { color: var(--ink); font-weight: 600; }
+.badge { display: inline-block; background: var(--sage); color: var(--olive); font-size: 11px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+
+h1 { font-size: clamp(32px, 8vw, 44px); font-weight: 300; line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h1 em { font-weight: 400; }
+.lead { color: var(--muted); margin: 10px 0 0; }
+
+.progress { display: flex; gap: 6px; }
+.progress span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); transition: background .25s; }
+.progress span.on { background: var(--ink); }
+
+.step { display: flex; flex-direction: column; gap: 16px; }
+.qhead { display: flex; align-items: baseline; gap: 14px; }
+.qnum { font-size: 48px; font-weight: 200; color: var(--num); line-height: 1; font-variant-numeric: tabular-nums; }
+.qtext { font-size: 22px; font-weight: 600; line-height: 1.25; margin: 0; text-wrap: balance; }
+.qhelp { color: var(--muted); font-size: 14px; margin: -6px 0 0; }
+
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { width: 100%; text-align: left; font: inherit; color: var(--ink); background: var(--card); border: 1.5px solid var(--line);
+  border-radius: 14px; padding: 14px 16px; cursor: pointer; display: flex; flex-direction: column; gap: 2px;
+  transition: border-color .15s, background .15s; }
+.opt:hover { border-color: var(--olive); }
+.opt:focus-visible { outline: 3px solid var(--olive); outline-offset: 2px; }
+.opt.sel { border-color: var(--ink); background: var(--sage); }
+.opt strong { font-weight: 600; font-size: 16px; }
+.opt small { color: var(--muted); font-size: 14px; }
+.opt.sel small { color: var(--ink); }
+
+.nav { display: flex; justify-content: space-between; align-items: center; }
+.back { background: none; border: 0; font: inherit; color: var(--muted); cursor: pointer; padding: 8px 0; }
+.back:hover { color: var(--ink); }
+.back:focus-visible { outline: 2px solid var(--olive); outline-offset: 2px; }
+
+/* Resultado */
+.result { display: flex; flex-direction: column; gap: 24px; }
+.big { background: var(--cta); color: var(--cta-ink); border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; gap: 6px; }
+.big .label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; font-weight: 600; }
+.big .weeks { font-size: clamp(52px, 16vw, 76px); font-weight: 300; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.big .weeks span { font-size: .38em; font-weight: 400; letter-spacing: 0; }
+.big .date { opacity: .8; }
+.note { margin: 0; }
+h2 { font-size: 20px; font-weight: 600; margin: 0; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.steps li { display: grid; grid-template-columns: 44px 1fr; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); }
+.steps li:last-child { border-bottom: 1px solid var(--line); }
+.steps .n { font-size: 26px; font-weight: 200; color: var(--muted); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.steps b { display: block; font-weight: 600; }
+.steps p { margin: 2px 0 0; color: var(--muted); font-size: 14px; min-width: 0; }
+.alert { border: 1.5px solid var(--warn); border-radius: 14px; padding: 14px 16px; font-size: 14px; }
+.alert b { color: var(--warn); }
+.cta { display: flex; flex-direction: column; gap: 10px; }
+.btn { display: block; text-align: center; text-decoration: none; font: inherit; font-weight: 600; border-radius: 999px;
+  padding: 15px 20px; cursor: pointer; border: 1.5px solid var(--cta); }
+.btn.primary { background: var(--cta); color: var(--cta-ink); }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn:focus-visible { outline: 3px solid var(--olive); outline-offset: 2px; }
+.fine { font-size: 12px; color: var(--muted); margin: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .step, .result { animation: in .3s ease-out; }
+  @keyframes in { from { transform: translateY(6px); opacity: .4; } to { transform: none; opacity: 1; } }
+}
+</style>
+
+<div class="wrap">
+  <div class="brand"><span><b>Carlos Cristóbal</b> · Fisioterapia</span><span class="badge">Readaptación</span></div>
+
+  <header>
+    <h1>¿Cuándo vuelvo a <em>correr?</em></h1>
+    <p class="lead">5 preguntas rápidas. Tardas menos de un minuto.</p>
+  </header>
+
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <main id="app" aria-live="polite"></main>
+</div>
+
+<script>
+// Semanas totales desde la lesión (u operación) hasta volver a correr: [mínimo, máximo]
+const INJURIES = {
+  tobillo: { name: "Esguince de tobillo", hint: "Me torcí el tobillo", ranges: [[1,3],[3,6],[6,12]] },
+  musculo: { name: "Rotura muscular", hint: "Gemelo, isquio, cuádriceps… noté un pinchazo", ranges: [[2,4],[4,8],[8,12]] },
+  tendon:  { name: "Dolor de tendón", hint: "Aquiles o debajo de la rótula", ranges: [[3,6],[6,12],[10,20]] },
+  rodilla: { name: "Dolor de rodilla", hint: "Sin operar", ranges: [[2,4],[4,8],[8,12]] },
+  tibia:   { name: "Dolor en la tibia", hint: "Periostitis o fractura por estrés", ranges: [[2,4],[4,8],[8,14]] },
+  lca:     { name: "Me operaron del LCA", hint: "Ligamento cruzado anterior", ranges: [[12,18],[12,20],[16,24]] }
+};
+
+const QUESTIONS = [
+  { id: "injury", text: "¿Qué te ha pasado?",
+    options: () => Object.entries(INJURIES).map(([v, i]) => ({ v, t: i.name, s: i.hint })) },
+  { id: "level",
+    text: a => a.injury === "lca" ? "¿Te tocaron también el menisco?" : "¿Cómo de fuerte fue al principio?",
+    options: a => a.injury === "lca"
+      ? [{ v: 0, t: "No", s: "Solo el ligamento" },
+         { v: 1, t: "Sí, me quitaron un trozo", s: "Meniscectomía" },
+         { v: 2, t: "Sí, me lo cosieron", s: "Sutura de menisco" }]
+      : [{ v: 0, t: "Flojito", s: "Podía andar casi normal" },
+         { v: 1, t: "Normal", s: "Cojeé unos días" },
+         { v: 2, t: "Fuerte", s: "No podía apoyar o tuve que parar del todo" }] },
+  { id: "elapsed",
+    text: a => a.injury === "lca" ? "¿Hace cuánto te operaron?" : "¿Hace cuánto pasó?",
+    options: () => [
+      { v: 1, t: "Menos de 2 semanas" }, { v: 3, t: "Entre 2 y 4 semanas" },
+      { v: 6, t: "1 o 2 meses" }, { v: 12, t: "2 a 4 meses" }, { v: 18, t: "Más de 4 meses" }] },
+  { id: "hop", text: "¿Puedes saltar 10 veces a la pata coja con la pierna lesionada?",
+    help: "Pruébalo ahora si puedes. Sin forzar.",
+    options: () => [
+      { v: "si", t: "Sí, sin dolor" }, { v: "molesta", t: "Sí, pero me molesta" }, { v: "no", t: "No puedo" }] },
+  { id: "rehab", text: "¿Estás haciendo ejercicios para recuperarte?",
+    options: () => [
+      { v: 1, t: "Sí, con un fisio" }, { v: 1.15, t: "Sí, por mi cuenta" },
+      { v: 1.35, t: "No", s: "Estoy esperando a que se cure solo" }] }
+];
+
+let step = 0;
+const answers = {};
+const app = document.getElementById("app");
+const progress = document.getElementById("progress");
+progress.innerHTML = QUESTIONS.map(() => "<span></span>").join("");
+
+const val = (x, a) => typeof x === "function" ? x(a) : x;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function paintProgress() {
+  [...progress.children].forEach((el, i) => el.classList.toggle("on", i < step || step >= QUESTIONS.length));
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[step];
+  const opts = q.options(answers);
+  app.innerHTML = `
+    <section class="step">
+      <div class="qhead"><span class="qnum">0${step + 1}</span><h2 class="qtext">${esc(val(q.text, answers))}</h2></div>
+      ${q.help ? `<p class="qhelp">${esc(q.help)}</p>` : ""}
+      <div class="opts" role="group">
+        ${opts.map((o, i) => `
+          <button class="opt${answers[q.id] === o.v ? " sel" : ""}" id="opt-${q.id}-${i}" data-i="${i}">
+            <strong>${esc(o.t)}</strong>${o.s ? `<small>${esc(o.s)}</small>` : ""}
+          </button>`).join("")}
+      </div>
+      <div class="nav">${step > 0 ? `<button class="back" id="back">← Atrás</button>` : "<span></span>"}
+        <span class="fine">${step + 1} de ${QUESTIONS.length}</span></div>
+    </section>`;
+  app.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
+    const o = opts[+b.dataset.i];
+    if (q.id === "injury" && answers.injury !== o.v) delete answers.level;
+    answers[q.id] = o.v;
+    b.classList.add("sel");
+    setTimeout(() => { step++; render(); }, 160);
+  }));
+  const back = document.getElementById("back");
+  if (back) back.addEventListener("click", () => { step--; render(); });
+}
+
+function estimate(a) {
+  const [bMin, bMax] = INJURIES[a.injury].ranges[a.level];
+  let min = bMin * a.rehab - a.elapsed;
+  let max = bMax * a.rehab - a.elapsed;
+  const floor = { si: [0, 1], molesta: [1, 3], no: [2, 4] }[a.hop];
+  const shift = { si: [-1, -2], molesta: [0, 0], no: [1, 2] }[a.hop];
+  min = Math.max(floor[0], Math.round(min + shift[0]));
+  max = Math.max(floor[1], Math.round(max + shift[1]), min + 1);
+  return { min, max };
+}
+
+function renderResult() {
+  const a = answers;
+  const { min, max } = estimate(a);
+  const d = new Date();
+  d.setDate(d.getDate() + Math.round((min + max) / 2 * 7));
+  const when = d.toLocaleDateString("es-ES", { day: "numeric", month: "long" });
+  const ready = min === 0;
+
+  const tips = [];
+  if (a.hop === "no") tips.push("Ahora mismo lo que más te frena es que todavía no puedes saltar. Cuando lo consigas sin dolor, el resto va rápido.");
+  if (a.hop === "molesta") tips.push("Estás cerca. Esa molestia al saltar es la señal de que aún hay que fortalecer un poco más.");
+  if (a.rehab > 1.2) tips.push("Si empiezas a hacer ejercicios guiados, lo normal es que esto se acorte. Esperar a que se cure solo suele alargarlo.");
+  else if (a.rehab > 1) tips.push("Hacerlo por tu cuenta está bien. Con un plan adaptado a ti suele ir más rápido y con menos recaídas.");
+  if (a.injury === "lca") tips.push("Con el LCA, volver a correr no es lo mismo que volver a jugar. El partido llega más tarde, normalmente a partir de los 9 meses.");
+
+  app.innerHTML = `
+    <section class="result">
+      <div class="big">
+        <span class="label">${ready ? "Tu estimación" : "Te quedan más o menos"}</span>
+        <span class="weeks">${ready ? `0–${max}` : `${min}–${max}`} <span>semanas</span></span>
+        <span class="date">${ready ? "Puedes empezar a probar ya, poco a poco." : `Si todo va bien, sobre el ${esc(when)}.`}</span>
+      </div>
+      ${tips.map(t => `<p class="note">${esc(t)}</p>`).join("")}
+
+      <h2>Los 3 pasos antes de correr</h2>
+      <ol class="steps">
+        <li><span class="n">01</span><div><b>Andar rápido 30 minutos</b><p>Sin dolor ni durante ni al día siguiente.</p></div></li>
+        <li><span class="n">02</span><div><b>Saltar a la pata coja</b><p>10 saltos seguidos con la pierna lesionada, sin dolor.</p></div></li>
+        <li><span class="n">03</span><div><b>Correr y andar</b><p>Empieza con 1 minuto corriendo y 1 andando, 10 veces. Si al día siguiente estás bien, vas subiendo.</p></div></li>
+      </ol>
+
+      <div class="alert"><b>Para y consulta</b> si se te hincha, te duele más cada día o no puedes apoyar el pie.</div>
+
+      <div class="cta">
+        <a class="btn primary" href="https://ig.me/m/carloscristobalfisio" target="_blank" rel="noopener">Hablemos de tu recuperación →</a>
+        <a class="btn ghost" href="https://carloscristobalfisioterapia.com" target="_blank" rel="noopener">Valoración gratuita online</a>
+        <button class="btn ghost" id="restart">Volver a calcular</button>
+      </div>
+      <p class="fine">Esto es una estimación orientativa, no un diagnóstico. Cada lesión es distinta: para un plan hecho para ti, escríbeme por Instagram a @carloscristobalfisio.</p>
+    </section>`;
+  document.getElementById("restart").addEventListener("click", () => {
+    Object.keys(answers).forEach(k => delete answers[k]); step = 0; render();
+  });
+}
+
+function render() {
+  paintProgress();
+  step < QUESTIONS.length ? renderQuestion() : renderResult();
+  window.scrollTo({ top: 0 });
+}
+render();
+</script>
