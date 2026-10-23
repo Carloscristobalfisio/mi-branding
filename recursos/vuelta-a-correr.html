@@ -95,6 +95,15 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 .btn.primary { background: var(--cta); color: var(--cta-ink); }
 .btn.ghost { background: transparent; color: var(--ink); }
 .btn:focus-visible { outline: 3px solid var(--olive); outline-offset: 2px; }
+.sym { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sym label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; min-width: 0; }
+.sym input { font: inherit; font-size: 28px; font-weight: 300; font-variant-numeric: tabular-nums; width: 100%;
+  padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+.sym input:focus-visible { outline: 3px solid var(--olive); outline-offset: 1px; }
+.symout { margin: 0; color: var(--muted); font-size: 15px; }
+.symout.pass { color: var(--olive); font-weight: 600; }
+.symout.fail { color: var(--warn); font-weight: 600; }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
 .fine { font-size: 12px; color: var(--muted); margin: 0; }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -108,7 +117,7 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 
   <header>
     <h1>¿Puedo volver a <em>correr?</em></h1>
-    <p class="lead">Para lesiones de rodilla: LCA, menisco y cartílago. Sin fechas: vuelves cuando tu rodilla cumple los criterios.</p>
+    <p class="lead">Para lesiones de rodilla: LCA, menisco y cartílago. Vuelves a correr cuando tu rodilla cumple los criterios.</p>
   </header>
 
   <div class="progress" id="progress" aria-hidden="true"></div>
@@ -117,7 +126,7 @@ h2 { font-size: 20px; font-weight: 600; margin: 0; }
 
 <script>
 const INJURIES = {
-  lca: { name: "LCA", hint: "Ligamento cruzado anterior, operado o no",
+  lca: { name: "LCA", hint: "Ligamento cruzado anterior",
     note: "Volver a correr no es volver a jugar. Los cambios de dirección y el partido tienen sus propios criterios, que vienen después." },
   menisco: { name: "Menisco", hint: "Recortado, cosido o sin operar",
     note: "Da igual si te lo recortaron, te lo cosieron o no te operaron: vuelves a correr cuando cumples los criterios." },
@@ -125,120 +134,165 @@ const INJURIES = {
     note: "Cuando cumplas los criterios, al principio mejor terreno blando y días de descanso entre salidas." }
 };
 
-// Criterios para volver a correr, en orden. Cada uno es una puerta: no se pasa al siguiente sin el anterior.
+const LCA_MIN_WEEKS = 12;
+
+// Criterios de salida de la Fase 2: hay que cumplirlos todos para empezar a correr
 const CRITERIA = [
-  { id: "hinchazon", phase: 1, label: "Rodilla sin hinchar",
-    q: "¿Tu rodilla está sin hinchar?", help: "Compárala con la otra. También al día siguiente de entrenar.",
-    yes: "Sí, igual que la otra", no: "No, se ve o se nota hinchada",
-    work: "Ajusta la carga: si al día siguiente de entrenar se hincha, te has pasado. Hielo, elevar la pierna y bajar un poco la intensidad." },
-  { id: "extension", phase: 1, label: "Rodilla estirada del todo",
-    q: "¿Puedes estirar la rodilla del todo?", help: "Sentado con la pierna recta: la parte de atrás de la rodilla toca el suelo, igual que la otra.",
-    yes: "Sí, igual que la otra", no: "No, se queda un poco doblada",
-    work: "Trabaja la extensión cada día: pierna recta con el talón apoyado en algo alto y deja que la rodilla baje sola." },
-  { id: "dolor", phase: 1, label: "Poco o ningún dolor en el día a día",
-    q: "¿Te duele la rodilla en el día a día?", help: "Al andar, subir escaleras o estar sentado.",
-    yes: "Nada o casi nada", no: "Sí, me molesta a menudo",
-    work: "Antes de meter impacto, el dolor diario tiene que estar en 0–2 sobre 10. Si no baja, que te valore un profesional." },
-  { id: "andar", phase: 2, label: "Andar 30 minutos rápido",
-    q: "¿Puedes andar 30 minutos rápido sin cojear ni dolor?", help: "Y que al día siguiente la rodilla siga bien.",
-    yes: "Sí", no: "No todavía",
-    work: "Sube poco a poco: 10, 15, 20 minutos… Si al día siguiente estás bien, añades 5 minutos más." },
-  { id: "sentadilla", phase: 2, label: "Sentadilla a una pierna",
-    q: "¿Haces 10 sentadillas a una pierna con la lesionada?", help: "Sin dolor y sin que la rodilla se vaya hacia dentro. Hazlo delante de un espejo.",
-    yes: "Sí, bien controladas", no: "No, o la rodilla se va hacia dentro",
-    work: "Fuerza de cuádriceps y glúteo: sentadilla a una pierna sentándote en una silla, step-ups y puente de glúteo a una pierna." },
-  { id: "salto", phase: 3, label: "Saltar a la pata coja",
-    q: "¿Saltas 10 veces seguidas a la pata coja con la lesionada?", help: "Sin dolor, cayendo suave, y sin que se hinche al día siguiente.",
-    yes: "Sí, sin dolor", no: "No, o me duele",
-    work: "Empieza con saltos a dos piernas, luego pasa de dos a una y al final a una sola. Pocas repeticiones y caídas suaves." }
+  { id: "movilidad", label: "Extensión completa (0°) y flexión de 120°",
+    q: "¿Estiras la rodilla del todo y la doblas hasta 120°?",
+    help: "Estirada: la parte de atrás de la rodilla toca el suelo, igual que la otra. Doblada a 120°: el talón llega cerca del culo. Si tu fisio te lo ha medido, usa ese dato.",
+    options: [{ v: true, t: "Sí, las dos cosas" }, { v: false, t: "No, me falta una o las dos" }],
+    work: "Recupera primero la extensión completa (0°) y después la flexión hasta 120°. Trabájalas a diario." },
+  { id: "slsct", label: "Simetría ≥70% en el SLSCT", sym: true,
+    q: "Test de sentadilla a una pierna en silla (SLSCT)",
+    help: "Haz el test con cada pierna y apunta cuántas repeticiones te salen.",
+    work: "Fuerza de cuádriceps a una pierna hasta que la lesionada llegue al 70% de lo que hace la sana." },
+  { id: "olbt", label: "Simetría ≥70% en el OLBT", sym: true,
+    q: "Test de puente a una pierna (OLBT)",
+    help: "Haz el test con cada pierna y apunta cuántas repeticiones te salen.",
+    work: "Fuerza de glúteo e isquios a una pierna hasta que la lesionada llegue al 70% de lo que hace la sana." },
+  { id: "hop", label: "Capaz de decelerar un hop vertical",
+    q: "¿Saltas hacia arriba con la pierna lesionada y frenas bien al caer?",
+    help: "Caes suave, aguantas sin perder el equilibrio y la rodilla no se va hacia dentro.",
+    options: [{ v: true, t: "Sí, freno y aguanto" }, { v: false, t: "No, caigo fuerte o pierdo el equilibrio" }],
+    work: "Aprende a frenar: primero caídas a dos piernas, luego de dos a una y al final saltos a una pierna. Caídas suaves y aguantar 2 segundos." },
+  { id: "dolor", label: "Dolor y molestias en descenso, sin miedo limitante",
+    q: "¿Cómo están el dolor y el miedo?",
+    options: [
+      { v: true, t: "El dolor va a menos y no me da miedo usar la rodilla" },
+      { v: false, t: "El dolor va a menos, pero me da miedo", s: "Por ejemplo, al saltar o al cargar peso sobre ella" },
+      { v: false, t: "El dolor no baja o va a más" }],
+    work: "Si el dolor no baja o el miedo te frena, se trabaja: exposición progresiva a los gestos que te dan miedo y ajuste de la carga." }
 ];
 
-const PHASES = {
-  1: { tag: "Fase 1", name: "Calmar la rodilla" },
-  2: { tag: "Fase 2", name: "Ganar fuerza" },
-  3: { tag: "Fase 3", name: "Preparar el impacto" },
-  4: { tag: "Listo", name: "Puedes empezar a correr" }
-};
-
-const QUESTIONS = [
-  { id: "injury", text: "¿Qué te pasó en la rodilla?",
-    options: () => Object.entries(INJURIES).map(([v, i]) => ({ v, t: i.name, s: i.hint })) },
-  ...CRITERIA.map(c => ({ id: c.id, text: c.q, help: c.help,
-    options: () => [{ v: true, t: c.yes }, { v: false, t: c.no }] }))
-];
+function questions(a) {
+  const list = [{ id: "injury", text: "¿Qué te pasó en la rodilla?",
+    options: Object.entries(INJURIES).map(([v, i]) => ({ v, t: i.name, s: i.hint })) }];
+  if (a.injury === "lca") list.push({ id: "weeks", text: `¿Han pasado ${LCA_MIN_WEEKS} semanas o más desde la operación?`,
+    options: [{ v: true, t: "Sí" }, { v: false, t: "No, todavía no" }] });
+  return list.concat(CRITERIA.map(c => ({ id: c.id, text: c.q, help: c.help, options: c.options, sym: c.sym })));
+}
 
 let step = 0;
 const answers = {};
 const app = document.getElementById("app");
 const progress = document.getElementById("progress");
-progress.innerHTML = QUESTIONS.map(() => "<span></span>").join("");
-
-const val = (x, a) => typeof x === "function" ? x(a) : x;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-function paintProgress() {
-  [...progress.children].forEach((el, i) => el.classList.toggle("on", i < step || step >= QUESTIONS.length));
+function paintProgress(total) {
+  progress.innerHTML = Array.from({ length: total }, (_, i) => `<span class="${i < step || step >= total ? "on" : ""}"></span>`).join("");
 }
 
-function renderQuestion() {
-  const q = QUESTIONS[step];
-  const opts = q.options(answers);
-  app.innerHTML = `
-    <section class="step">
-      <div class="qhead"><span class="qnum">0${step + 1}</span><h2 class="qtext">${esc(val(q.text, answers))}</h2></div>
-      ${q.help ? `<p class="qhelp">${esc(q.help)}</p>` : ""}
-      <div class="opts" role="group">
-        ${opts.map((o, i) => `
-          <button class="opt${answers[q.id] === o.v ? " sel" : ""}" id="opt-${q.id}-${i}" data-i="${i}">
-            <strong>${esc(o.t)}</strong>${o.s ? `<small>${esc(o.s)}</small>` : ""}
-          </button>`).join("")}
-      </div>
-      <div class="nav">${step > 0 ? `<button class="back" id="back">← Atrás</button>` : "<span></span>"}
-        <span class="fine">${step + 1} de ${QUESTIONS.length}</span></div>
-    </section>`;
-  app.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
-    answers[q.id] = opts[+b.dataset.i].v;
-    b.classList.add("sel");
-    setTimeout(() => { step++; render(); }, 160);
-  }));
+function head(q, total) {
+  return `<div class="qhead"><span class="qnum">0${step + 1}</span><h2 class="qtext">${esc(q.text)}</h2></div>
+    ${q.help ? `<p class="qhelp">${esc(q.help)}</p>` : ""}`;
+}
+function nav(total, extra = "") {
+  return `<div class="nav">${step > 0 ? `<button class="back" id="back">← Atrás</button>` : "<span></span>"}
+    ${extra}<span class="fine">${step + 1} de ${total}</span></div>`;
+}
+function next() { step++; render(); }
+function bindBack() {
   const back = document.getElementById("back");
   if (back) back.addEventListener("click", () => { step--; render(); });
 }
 
-// La fase la marca el primer criterio que no se cumple
+function renderChoice(q, total) {
+  app.innerHTML = `<section class="step">${head(q, total)}
+      <div class="opts" role="group">
+        ${q.options.map((o, i) => `
+          <button class="opt${answers[q.id + "_i"] === i ? " sel" : ""}" id="opt-${q.id}-${i}" data-i="${i}">
+            <strong>${esc(o.t)}</strong>${o.s ? `<small>${esc(o.s)}</small>` : ""}
+          </button>`).join("")}
+      </div>${nav(total)}</section>`;
+  app.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
+    const i = +b.dataset.i;
+    if (q.id === "injury" && answers.injury !== q.options[i].v) { delete answers.weeks; delete answers.weeks_i; }
+    answers[q.id] = q.options[i].v;
+    answers[q.id + "_i"] = i;
+    b.classList.add("sel");
+    setTimeout(next, 160);
+  }));
+  bindBack();
+}
+
+// Pantalla de simetría: repeticiones con cada pierna y % de la lesionada respecto a la sana
+function renderSym(q, total) {
+  const prev = answers[q.id + "_reps"] || {};
+  app.innerHTML = `<section class="step">${head(q, total)}
+      <div class="sym">
+        <label for="${q.id}-sana">Pierna sana<input id="${q.id}-sana" type="number" inputmode="numeric" min="0" placeholder="Ej: 20" value="${prev.sana ?? ""}"></label>
+        <label for="${q.id}-les">Pierna lesionada<input id="${q.id}-les" type="number" inputmode="numeric" min="0" placeholder="Ej: 15" value="${prev.les ?? ""}"></label>
+      </div>
+      <p class="symout" id="${q.id}-out">Escribe las dos cifras.</p>
+      <div class="cta">
+        <button class="btn primary" id="${q.id}-go" disabled>Siguiente</button>
+        <button class="btn ghost" id="${q.id}-skip">No lo he medido</button>
+      </div>${nav(total)}</section>`;
+  const sana = document.getElementById(q.id + "-sana"), les = document.getElementById(q.id + "-les");
+  const out = document.getElementById(q.id + "-out"), go = document.getElementById(q.id + "-go");
+  const update = () => {
+    const s = +sana.value, l = +les.value;
+    const ok = sana.value !== "" && les.value !== "" && s > 0 && l >= 0;
+    go.disabled = !ok;
+    if (!ok) { out.textContent = "Escribe las dos cifras."; out.className = "symout"; return; }
+    const pct = Math.round(l / s * 100);
+    out.textContent = `Tu pierna lesionada está al ${pct}% de la sana. ${pct >= 70 ? "Cumples (≥70%)." : "Necesitas llegar al 70%."}`;
+    out.className = "symout " + (pct >= 70 ? "pass" : "fail");
+  };
+  sana.addEventListener("input", update); les.addEventListener("input", update); update();
+  go.addEventListener("click", () => {
+    const s = +sana.value, l = +les.value, pct = Math.round(l / s * 100);
+    answers[q.id + "_reps"] = { sana: s, les: l };
+    answers[q.id + "_pct"] = pct;
+    answers[q.id] = pct >= 70;
+    next();
+  });
+  document.getElementById(q.id + "-skip").addEventListener("click", () => {
+    delete answers[q.id + "_reps"]; answers[q.id + "_pct"] = null; answers[q.id] = false; next();
+  });
+  bindBack();
+}
+
 function assess(a) {
   const met = CRITERIA.filter(c => a[c.id]).length;
-  const next = CRITERIA.find(c => !a[c.id]);
-  return { met, next, phase: next ? next.phase : 4 };
+  const pending = CRITERIA.find(c => !a[c.id]);
+  const tooEarly = a.injury === "lca" && a.weeks === false;
+  return { met, pending, tooEarly, ready: !pending && !tooEarly };
+}
+
+function detail(c) {
+  if (!c.sym) return answers[c.id] ? "Conseguido" : "Pendiente";
+  const pct = answers[c.id + "_pct"];
+  return pct == null ? "Sin medir" : `${pct}% · ${answers[c.id] ? "Conseguido" : "Pendiente"}`;
 }
 
 function renderResult() {
-  const { met, next, phase } = assess(answers);
-  const p = PHASES[phase];
-  const ready = !next;
+  const { met, pending, tooEarly, ready } = assess(answers);
+  let goal = "";
+  if (pending) {
+    const unmeasured = pending.sym && answers[pending.id + "_pct"] == null;
+    goal = `<div class="goal"><span class="label">Tu siguiente objetivo</span><b>${esc(pending.label)}</b>
+      <p>${esc(unmeasured ? "Todavía no lo has medido. Hazte el test con cada pierna para saber dónde estás." : pending.work)}</p></div>`;
+  }
 
   app.innerHTML = `
     <section class="result">
       <div class="big">
-        <span class="label">${p.tag}</span>
-        <span class="phase">${esc(p.name)}</span>
+        <span class="label">${ready ? "Fase 2 superada" : "Fase 2"}</span>
+        <span class="phase">${ready ? "Puedes empezar a correr" : "Todavía no toca correr"}</span>
         <div class="meter" aria-hidden="true">${CRITERIA.map(c => `<i class="${answers[c.id] ? "ok" : ""}"></i>`).join("")}</div>
         <span class="date">Cumples ${met} de ${CRITERIA.length} criterios</span>
       </div>
 
-      ${ready ? `
-        <p class="note">Cumples todos los criterios. Empieza con correr y andar: 1 minuto corriendo y 1 andando, 10 veces, en días alternos. Si al día siguiente la rodilla está bien (sin hinchar y sin más dolor), vas subiendo los minutos de correr.</p>` : `
-        <div class="goal">
-          <span class="label">Tu siguiente objetivo</span>
-          <b>${esc(next.label)}</b>
-          <p>${esc(next.work)}</p>
-        </div>`}
+      ${tooEarly ? `<p class="note">En el LCA se empieza a correr a partir de la semana ${LCA_MIN_WEEKS} después de la operación. Mientras tanto, sigue trabajando estos criterios para llegar con todo listo.</p>` : ""}
+      ${ready ? `<p class="note">Cumples todos los criterios de salida de la Fase 2. Empieza con correr y andar: 1 minuto corriendo y 1 andando, 10 veces, en días alternos. Si al día siguiente la rodilla está bien, vas subiendo.</p>` : goal}
 
-      <h2>Tus criterios</h2>
+      <h2>Criterios para volver a correr</h2>
       <ol class="steps checks">
         ${CRITERIA.map(c => `<li class="${answers[c.id] ? "ok" : "ko"}">
           <span class="n">${answers[c.id] ? "✓" : "✗"}</span>
-          <div><b>${esc(c.label)}</b><p>${PHASES[c.phase].tag} · ${answers[c.id] ? "Conseguido" : "Pendiente"}</p></div></li>`).join("")}
+          <div><b>${esc(c.label)}</b><p>${esc(detail(c))}</p></div></li>`).join("")}
       </ol>
       <p class="note">${esc(INJURIES[answers.injury].note)}</p>
 
@@ -257,8 +311,10 @@ function renderResult() {
 }
 
 function render() {
-  paintProgress();
-  step < QUESTIONS.length ? renderQuestion() : renderResult();
+  const qs = questions(answers);
+  paintProgress(qs.length);
+  if (step >= qs.length) renderResult();
+  else (qs[step].sym ? renderSym : renderChoice)(qs[step], qs.length);
   window.scrollTo({ top: 0 });
 }
 render();
