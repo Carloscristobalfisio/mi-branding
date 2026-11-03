@@ -38,7 +38,7 @@
   .stat b i{font-style:normal;font-size:.7em;color:#4ADE80}
   .stat small{display:block;margin-top:4px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8C918D}
 
-  .media{position:relative;display:block;width:100%;border:0;padding:0;cursor:pointer;background:#222 center/cover no-repeat;border-radius:8px 0 0 8px;aspect-ratio:4/3.4;align-self:center}
+  .media{position:relative;display:block;width:100%;border:0;padding:0;cursor:pointer;background:#222 center 30%/cover no-repeat;border-radius:8px 0 0 8px;aspect-ratio:4/3.4;align-self:center}
   .play{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:var(--accent);box-shadow:0 6px 20px rgba(0,0,0,.35);display:grid;place-items:center;transition:transform .15s}
   .play svg{width:22px;height:22px;margin-left:3px;fill:var(--card)}
   .media:active .play{transform:scale(.92)}
@@ -101,15 +101,10 @@
   //   despues → frase en blanco (cómo está ahora)
   //   dato    → cifra grande del recuadro      tiempo → texto pequeño debajo
   const CASOS = [
-    { nombre:"Nombre", antes:"Operado de LCA y con miedo a saltar", despues:"De vuelta al fútbol",
-      dato:"LCA", tiempo:"8 meses", frase:"Frase del paciente sobre su recuperación.",
-      video:"videos/cliente1.mp4", portada:"videos/cliente1.jpg" },
-    { nombre:"Nombre", antes:"Dolor de rodilla al bajar escaleras", despues:"Ahora corre sin dolor",
-      dato:"0 dolor", tiempo:"12 semanas", frase:"Frase del paciente sobre su recuperación.",
-      video:"videos/cliente2.mp4", portada:"videos/cliente2.jpg" },
-    { nombre:"Nombre", antes:"Rotura de menisco", despues:"Vuelve a entrenar al 100%",
-      dato:"Menisco", tiempo:"4 meses", frase:"Frase del paciente sobre su recuperación.",
-      video:"videos/cliente3.mp4", portada:"videos/cliente3.jpg" },
+    { nombre:"Adrián", antes:"14 años con miedo a correr y saltar", despues:"Vuelve a jugar al fútbol al 100%",
+      dato:"100%", tiempo:"LCA · menisco · cartílago",
+      frase:"Llevaba 14 años con la rodilla inestable y sin fuerza. Ha perdido el miedo, ha vuelto a saltar y ha recuperado la confianza para jugar al fútbol al 100%.",
+      video:"videos/adrian.mp4", portada:"videos/adrian.jpg" },
   ];
 
   /* ========================================================= */
