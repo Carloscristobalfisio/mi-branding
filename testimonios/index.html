@@ -100,11 +100,16 @@
   //   antes   → frase en verde (cómo estaba)
   //   despues → frase en blanco (cómo está ahora)
   //   dato    → cifra grande del recuadro      tiempo → texto pequeño debajo
+  //   encuadre → (opcional) qué parte de la portada se ve, ej. "center 58%" si la cara sale baja
   const CASOS = [
     { nombre:"Adrián", antes:"14 años con miedo a correr y saltar", despues:"Vuelve a jugar al fútbol al 100%",
       dato:"100%", tiempo:"LCA · menisco · cartílago",
       frase:"Llevaba 14 años con la rodilla inestable y sin fuerza. Ha perdido el miedo, ha vuelto a saltar y ha recuperado la confianza para jugar al fútbol al 100%.",
       video:"videos/adrian.mp4", portada:"videos/adrian.jpg" },
+    { nombre:"Manuel", antes:"Lesión de menisco y sin querer operarse", despues:"Juega al fútbol y trabaja sin limitaciones",
+      dato:"100%", tiempo:"Menisco · sin cirugía",
+      frase:"No quería operarse y necesitaba seguir trabajando. La rodilla le limitaba en el día a día, en el trabajo y en el deporte. Hoy ha vuelto a jugar al fútbol y a trabajar sin problema, al 100%.",
+      video:"videos/manuel.mp4", portada:"videos/manuel.jpg", encuadre:"center 40%" },
   ];
 
   /* ========================================================= */
@@ -124,7 +129,7 @@
             <div class="stat"><b>${esc(c.dato)} <i>✓</i></b><small>${esc(c.tiempo)}</small></div>
           </div>
           <button class="media" data-i="${i}" aria-label="Ver testimonio de ${esc(c.nombre)}"
-            style="background-image:url('${esc(c.portada)}')"><span class="play">${playIcon}</span></button>
+            style="background-image:url('${esc(c.portada)}');background-position:${esc(c.encuadre || 'center 30%')}"><span class="play">${playIcon}</span></button>
         </div>
       </div>
       <p class="quote"><strong>${esc(c.nombre)}</strong> ${esc(c.frase)}</p>
