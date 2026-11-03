@@ -42,6 +42,7 @@
   .play{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:var(--accent);box-shadow:0 6px 20px rgba(0,0,0,.35);display:grid;place-items:center;transition:transform .15s}
   .play svg{width:22px;height:22px;margin-left:3px;fill:var(--card)}
   .media:active .play{transform:scale(.92)}
+  .media.corner .play{left:auto;top:auto;right:12px;bottom:12px;margin:0;width:50px;height:50px}
 
   .quote{font-size:16px;line-height:1.7;color:#3D3D3D;padding:14px 8px 0}
   .quote strong{color:var(--text);font-weight:700}
@@ -100,6 +101,7 @@
   //   antes   → frase en verde (cómo estaba)
   //   despues → frase en blanco (cómo está ahora)
   //   dato    → cifra grande del recuadro      tiempo → texto pequeño debajo
+  //   boton   → (opcional) "esquina" pone el play abajo a la derecha si tapa la cara
   //   encuadre → (opcional) qué parte de la portada se ve, ej. "center 58%" si la cara sale baja
   const CASOS = [
     { nombre:"Adrián", antes:"14 años con miedo a correr y saltar", despues:"Vuelve a jugar al fútbol al 100%",
@@ -126,6 +128,10 @@
       dato:"+ fuerte", tiempo:"Condromalacia rotuliana",
       frase:"Probó pinchazos y corrientes sin mejorar. No podía subir escaleras ni cuestas, agacharse, ponerse tacones ni andar más de 5 minutos, y la rodilla se le hinchaba. Con ejercicios adaptados a ella, hoy hace su vida totalmente normal, está más fuerte y le ha cambiado la vida.",
       video:"videos/paola.mp4", portada:"videos/paola.jpg", encuadre:"center 21%" },
+    { nombre:"Natalia", antes:"Operada de LCA y menisco con miedo a volver", despues:"De vuelta al crossfit",
+      dato:"4 meses", tiempo:"LCA + menisco",
+      frase:"Se rompió el LCA y el menisco haciendo crossfit. Tras la operación hizo con nosotros ejercicios que ni pensaba volver a hacer porque le daban muchísimo miedo. A los 4 meses volvió al crossfit, ganó muchísima confianza y hoy sigue entrenando, corriendo y mejorando.",
+      video:"videos/natalia.mp4", portada:"videos/natalia.jpg", encuadre:"center 0%", boton:"esquina" },
   ];
 
   /* ========================================================= */
@@ -144,7 +150,7 @@
             <div class="head"><span class="before">${esc(c.antes)}</span><br>${esc(c.despues)}</div>
             <div class="stat"><b>${esc(c.dato)} <i>✓</i></b><small>${esc(c.tiempo)}</small></div>
           </div>
-          <button class="media" data-i="${i}" aria-label="Ver testimonio de ${esc(c.nombre)}"
+          <button class="media${c.boton === 'esquina' ? ' corner' : ''}" data-i="${i}" aria-label="Ver testimonio de ${esc(c.nombre)}"
             style="background-image:url('${esc(c.portada)}');background-position:${esc(c.encuadre || 'center 30%')}"><span class="play">${playIcon}</span></button>
         </div>
       </div>
