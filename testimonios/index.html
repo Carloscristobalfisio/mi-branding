@@ -81,7 +81,7 @@
 </main>
 
 <div class="float">
-  <a class="btn-wa" id="wa" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Escríbeme por WhatsApp</a>
+  <a class="btn-wa" id="wa-btn" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Escríbeme por WhatsApp</a>
 </div>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Vídeo testimonio">
@@ -93,7 +93,7 @@
   /* ================= EDITA SOLO ESTA PARTE ================= */
 
   // Tu número con prefijo de país, sin "+" ni espacios. Ej: 34612345678
-  const WHATSAPP = "34XXXXXXXXX";
+  const WHATSAPP = "34674613651";
   const MENSAJE  = "Hola Carlos, he visto los casos de éxito y quiero recuperar mi rodilla. Mi lesión es: ";
   const MARCA    = "Carlos Cristóbal Fisio";   // texto pequeño arriba de cada tarjeta
 
@@ -104,7 +104,7 @@
   //   boton   → (opcional) "esquina" pone el play abajo a la derecha si tapa la cara
   //   encuadre → (opcional) qué parte de la portada se ve, ej. "center 58%" si la cara sale baja
   const CASOS = [
-    { nombre:"Adrián", antes:"14 años con miedo a correr y saltar", despues:"Vuelve a jugar al fútbol al 100%",
+    { nombre:"Adrián Sánchez", antes:"14 años con miedo a correr y saltar", despues:"Vuelve a jugar al fútbol al 100%",
       dato:"100%", tiempo:"LCA · menisco · cartílago",
       frase:"Llevaba 14 años con la rodilla inestable y sin fuerza. Ha perdido el miedo, ha vuelto a saltar y ha recuperado la confianza para jugar al fútbol al 100%.",
       video:"videos/adrian.mp4", portada:"videos/adrian.jpg" },
@@ -132,7 +132,7 @@
       dato:"4 meses", tiempo:"LCA + menisco",
       frase:"Se rompió el LCA y el menisco haciendo crossfit. Tras la operación hizo con nosotros ejercicios que ni pensaba volver a hacer porque le daban muchísimo miedo. A los 4 meses volvió al crossfit, ganó muchísima confianza y hoy sigue entrenando, corriendo y mejorando.",
       video:"videos/natalia.mp4", portada:"videos/natalia.jpg", encuadre:"center 0%", boton:"esquina" },
-    { nombre:"Adrián", antes:"Un año después de operarse seguía con miedo", despues:"Juega al fútbol con confianza",
+    { nombre:"Adrián López", antes:"Un año después de operarse seguía con miedo", despues:"Juega al fútbol con confianza",
       dato:"Confianza", tiempo:"LCA + menisco",
       frase:"Tras la operación perdió mucha musculatura, fuerza y movilidad, y llegó a pensar que no volvería a jugar al fútbol. Trabajamos sobre ello y hoy ha vuelto a jugar con confianza: «He recuperado esa sensación de tener una rodilla sana».",
       video:"videos/adrian2.mp4", portada:"videos/adrian2.jpg", encuadre:"center 28%", boton:"esquina" },
@@ -144,7 +144,7 @@
 
   /* ========================================================= */
 
-  document.getElementById("wa").href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(MENSAJE);
+  document.getElementById("wa-btn").href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(MENSAJE);
 
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const playIcon = '<svg viewBox="0 0 24 24"><path d="M6 4l15 8-15 8z"/></svg>';
